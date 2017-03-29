@@ -145,11 +145,15 @@ public class FullScannerFragment extends Fragment implements MessageDialogFragme
     @Override
     public void handleResult(Result rawResult) {
         try {
+
             //바코드 스캔완료시 완료사운드 재생부
             Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
             Ringtone r = RingtoneManager.getRingtone(getActivity().getApplicationContext(), notification);
             r.play();
+            //===================================
+
         } catch (Exception e) {}
+        //다이얼로그 Show / WebView 넘어가기
         showMessageDialog("Contents = " + rawResult.getText() + ", Format = " + rawResult.getBarcodeFormat().toString());
         Intent intent = new Intent(getActivity(), WebActivity.class);
         String result = rawResult.getText().toString();

@@ -1,5 +1,6 @@
 package com.ahchim.android.ritto;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.webkit.WebChromeClient;
@@ -15,6 +16,10 @@ public class WebActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web);
 
+        Intent intent = getIntent();
+
+        String url = intent.getStringExtra("Url");
+
         webView = (WebView) findViewById(R.id.webView);
         webView.getSettings().setJavaScriptEnabled(true);
         // 줌사용
@@ -27,7 +32,7 @@ public class WebActivity extends AppCompatActivity {
         webView.setWebChromeClient(new WebChromeClient());
 
         // 최초 로드시 google.com 이동
-        //webView.loadUrl("");
+        webView.loadUrl(url);
 
     }
 }
