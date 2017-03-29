@@ -21,7 +21,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".BaseScannerActivity" />
-        <activity android:name=".FullScannerFragmentActivity"></activity>
+        <activity android:name=".FullScannerFragmentActivity" />
+        <activity android:name=".WebActivity"></activity>
     </application>
 
 </manifest>
