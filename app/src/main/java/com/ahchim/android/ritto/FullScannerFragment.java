@@ -15,10 +15,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
-
 import java.util.ArrayList;
 import java.util.List;
 
