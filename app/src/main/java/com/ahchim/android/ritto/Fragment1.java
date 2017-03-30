@@ -11,7 +11,7 @@ import com.nhn.android.maps.NMapView;
 
 public class Fragment1 extends Fragment {
     private NMapContext mMapContext;
-    private static final String CLIENT_ID = "YOUR_CLIENT_ID";// 애플리케이션 클라이언트 아이디 값
+    private static final String CLIENT_ID = "P8jDQcqVM_RObTUp8XkD";// 애플리케이션 클라이언트 아이디 값
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment1, container, false);
@@ -27,6 +27,11 @@ public class Fragment1 extends Fragment {
         super.onActivityCreated(savedInstanceState);
         NMapView mapView = (NMapView)getView().findViewById(R.id.mapView);
         mapView.setClientId(CLIENT_ID);// 클라이언트 아이디 설정
+        mapView.setClickable(true);
+        mapView.setFocusable(true);
+        mapView.setEnabled(true);
+        mapView.setFocusableInTouchMode(true);
+        mapView.requestFocus();
         mMapContext.setupMapView(mapView);
     }
     @Override

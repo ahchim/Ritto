@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-
+    //네이버 지도 로딩
     public void moveToNaverMap(View v){
         Intent intent = new Intent(MainActivity.this, FragmentMapActivity.class);
         startActivity(intent);
