@@ -26,8 +26,6 @@ public class MainActivity extends AppCompatActivity
     private Class<?> mClss;
     private static final int ZXING_CAMERA_PERMISSION = 1;
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,6 +54,13 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
     }
 
+
+
+    public void moveToNaverMap(View v){
+        Intent intent = new Intent(MainActivity.this, FragmentMapActivity.class);
+        startActivity(intent);
+    }
+
     public void genNumberMenu(View v) {
         PopupMenu popup = new PopupMenu(this, v);
         MenuInflater inflater = popup.getMenuInflater();
@@ -70,10 +75,23 @@ public class MainActivity extends AppCompatActivity
         popup.show();
     }
 
-    public void showStoreMenu(View v) {
+    public void showStoreMenu(final View v) {
         PopupMenu popup = new PopupMenu(this, v);
         MenuInflater inflater = popup.getMenuInflater();
         inflater.inflate(R.menu.show_store, popup.getMenu());
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()){
+                    case R.id.action_store_around :
+                        moveToNaverMap(v);
+                        break;
+                    case R.id.action_store_nationwide :
+                        break;
+                }
+                return false;
+            }
+        });
         popup.show();
     }
 
@@ -143,4 +161,6 @@ public class MainActivity extends AppCompatActivity
     public void launchFullFragmentActivity(View v) {
         launchActivity(FullScannerFragmentActivity.class);
     }
+
+
 }
