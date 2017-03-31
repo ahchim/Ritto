@@ -1,6 +1,7 @@
 package com.ahchim.android.ritto;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -19,12 +20,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
+
+import com.nhn.android.maps.NMapView;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private Class<?> mClss;
     private static final int ZXING_CAMERA_PERMISSION = 1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +62,7 @@ public class MainActivity extends AppCompatActivity
 
     //네이버 지도 로딩
     public void moveToNaverMap(View v){
-        Intent intent = new Intent(MainActivity.this, FragmentMapActivity.class);
+        Intent intent = new Intent(MainActivity.this, NMapViewer.class);
         startActivity(intent);
     }
 
