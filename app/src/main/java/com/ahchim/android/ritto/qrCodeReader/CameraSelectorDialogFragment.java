@@ -1,4 +1,4 @@
-package com.ahchim.android.ritto;
+package com.ahchim.android.ritto.qrCodeReader;
 
 /**
  * Created by Gold on 2017. 3. 28..
@@ -10,6 +10,8 @@ import android.content.DialogInterface;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+
+import com.ahchim.android.ritto.R;
 
 public class CameraSelectorDialogFragment extends DialogFragment {
     public interface CameraSelectorDialogListener {

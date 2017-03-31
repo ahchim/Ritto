@@ -10,7 +10,7 @@
         android:id="@+id/scanner_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:name="com.ahchim.android.ritto.FullScannerFragment" />
+        android:name="com.ahchim.android.ritto.qrCodeReader.FullScannerFragment" />
 
 
     <!--

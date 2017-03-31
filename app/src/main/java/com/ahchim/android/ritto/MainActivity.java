@@ -1,12 +1,10 @@
 package com.ahchim.android.ritto;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.PopupMenu;
@@ -20,9 +18,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ViewGroup;
 
-import com.nhn.android.maps.NMapView;
+import com.ahchim.android.ritto.daummap.DaumMapActivity;
+import com.ahchim.android.ritto.qrCodeReader.FullScannerFragmentActivity;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -62,7 +60,7 @@ public class MainActivity extends AppCompatActivity
 
     //네이버 지도 로딩
     public void moveToNaverMap(View v){
-        Intent intent = new Intent(MainActivity.this, NMapViewer.class);
+        Intent intent = new Intent(MainActivity.this, DaumMapActivity.class);
         startActivity(intent);
     }
 

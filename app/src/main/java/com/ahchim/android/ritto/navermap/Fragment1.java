@@ -1,4 +1,4 @@
-package com.ahchim.android.ritto;
+package com.ahchim.android.ritto.navermap;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.ahchim.android.ritto.R;
 import com.nhn.android.maps.NMapCompassManager;
 import com.nhn.android.maps.NMapContext;
 import com.nhn.android.maps.NMapLocationManager;

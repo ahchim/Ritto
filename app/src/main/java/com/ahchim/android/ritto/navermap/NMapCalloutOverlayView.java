@@ -1,4 +1,4 @@
-package com.ahchim.android.ritto;
+package com.ahchim.android.ritto.navermap;
 
 /**
  * Created by Gold on 2017. 3. 31..

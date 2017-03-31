@@ -1,4 +1,4 @@
-package com.ahchim.android.ritto;
+package com.ahchim.android.ritto.qrCodeReader;
 
 import android.app.AlertDialog;
 import android.app.Dialog;

@@ -1,4 +1,4 @@
-package com.ahchim.android.ritto;
+package com.ahchim.android.ritto.navermap;
 
 /**
  * Created by Gold on 2017. 3. 31..
@@ -12,7 +12,6 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.text.TextPaint;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.nhn.android.maps.NMapOverlay;
 import com.nhn.android.maps.NMapOverlayItem;

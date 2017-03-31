@@ -29,13 +29,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".BaseScannerActivity" />
-        <activity android:name=".FullScannerFragmentActivity" />
+        <activity android:name=".qrCodeReader.BaseScannerActivity" />
+        <activity android:name=".qrCodeReader.FullScannerFragmentActivity" />
         <activity android:name=".WebActivity" />
-        <activity android:name=".FragmentMapActivity" />
-        <activity android:name=".NMapViewer">
-
-        </activity>
+        <activity android:name=".navermap.FragmentMapActivity" />
+        <activity android:name=".navermap.NMapViewer"></activity>
+        <activity android:name=".daummap.DaumMapActivity"></activity>
     </application>
 
 </manifest>

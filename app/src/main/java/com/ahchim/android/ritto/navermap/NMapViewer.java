@@ -1,4 +1,4 @@
-package com.ahchim.android.ritto;
+package com.ahchim.android.ritto.navermap;
 
 import android.content.Context;
 import android.content.Intent;

@@ -1,8 +1,9 @@
-package com.ahchim.android.ritto;
+package com.ahchim.android.ritto.qrCodeReader;
 
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import com.ahchim.android.ritto.R;
 
 public class FullScannerFragmentActivity extends BaseScannerActivity {
 

@@ -1,4 +1,4 @@
-package com.ahchim.android.ritto;
+package com.ahchim.android.ritto.qrCodeReader;
 
 import android.content.Intent;
 import android.media.Ringtone;
@@ -15,6 +15,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.ahchim.android.ritto.R;
+import com.ahchim.android.ritto.WebActivity;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
 import java.util.ArrayList;
