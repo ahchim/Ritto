@@ -35,6 +35,7 @@
         <activity android:name=".navermap.FragmentMapActivity" />
         <activity android:name=".navermap.NMapViewer"></activity>
         <activity android:name=".daummap.DaumMapActivity"></activity>
+        <activity android:name=".daummap.search.LocationDemoActivity"></activity>
     </application>
 
 </manifest>

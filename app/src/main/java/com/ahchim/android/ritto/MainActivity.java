@@ -20,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.ahchim.android.ritto.daummap.DaumMapActivity;
+import com.ahchim.android.ritto.daummap.search.LocationDemoActivity;
 import com.ahchim.android.ritto.qrCodeReader.FullScannerFragmentActivity;
 
 public class MainActivity extends AppCompatActivity
@@ -59,7 +60,7 @@ public class MainActivity extends AppCompatActivity
 
 
     //네이버 지도 로딩
-    public void moveToNaverMap(View v){
+    public void moveToMap(View v){
         Intent intent = new Intent(MainActivity.this, DaumMapActivity.class);
         startActivity(intent);
     }
@@ -87,7 +88,7 @@ public class MainActivity extends AppCompatActivity
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()){
                     case R.id.action_store_around :
-                        moveToNaverMap(v);
+                        moveToMap(v);
                         break;
                     case R.id.action_store_nationwide :
                         break;
@@ -97,6 +98,7 @@ public class MainActivity extends AppCompatActivity
         });
         popup.show();
     }
+
 
     @Override
     public void onBackPressed() {
