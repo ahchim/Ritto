@@ -1,6 +1,7 @@
 package com.ahchim.android.ritto.daummap;
 
 import android.content.Context;
+import android.os.Build;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,11 +15,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.ahchim.android.ritto.PermissionControl;
 import com.ahchim.android.ritto.R;
 import com.ahchim.android.ritto.daummap.search.Item;
 import com.ahchim.android.ritto.daummap.search.OnFinishSearchListener;
 import com.ahchim.android.ritto.daummap.search.Searcher;
 
+import net.daum.mf.map.api.CameraUpdate;
 import net.daum.mf.map.api.CameraUpdateFactory;
 import net.daum.mf.map.api.MapPOIItem;
 import net.daum.mf.map.api.MapPoint;
@@ -31,16 +34,21 @@ import java.util.List;
 public class DaumMapActivity extends AppCompatActivity implements MapView.MapViewEventListener, MapView.CurrentLocationEventListener{
 
     private static final String DAUM_MAP_API_KEY = "a14b32c93ef72e751b9a37ceea05fd95";
+    private final int REQ_PERMISSION = 100; // 권한요청코드
+
     EditText etSearch;
     Button btnSearch;
     MapView mapView;
     private HashMap<Integer, Item> mTagItemMap = new HashMap<Integer, Item>();
 
+    MapPoint mCurrentLocation = null;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        checkPermission();
 
         setContentView(R.layout.activity_daum_map);
 
@@ -55,43 +63,81 @@ public class DaumMapActivity extends AppCompatActivity implements MapView.MapVie
         etSearch = (EditText) findViewById(R.id.etSearch);
         btnSearch = (Button) findViewById(R.id.btnSearch);
 
-        btnSearch.setOnClickListener(new View.OnClickListener() {
+        Thread thread = new Thread(new Runnable() {
             @Override
-            public void onClick(View v) {
-                String query = etSearch.getText().toString();
-                if(query == null || query.length() == 0){
-                    Toast.makeText(getApplicationContext(), "검색어를 입력하세요!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                hideSoftKeyboard();
-                MapPoint.GeoCoordinate geoCoordinate = mapView.getMapCenterPoint().getMapPointGeoCoord();
-
-
-                double latitude = geoCoordinate.latitude; //위도
-                double longtitude = geoCoordinate.longitude; //경도
-                int radius = 10000; // 중심좌표부터의 반경거리 특정지역을 중심으로 검색하려고 할 경우 사용한다. meter 단위(0~10000);
-                int page = 1; // 페이지번호 (1~3) 한페이지에 15개
-
-                Searcher searcher = new Searcher();
-                mapView.removeAllPOIItems(); // 기존 검색결과 삭제
-
-                    searcher.searchKeyword(getApplicationContext(), query, latitude, longtitude, radius, page, DAUM_MAP_API_KEY, new OnFinishSearchListener() {
-                        @Override
-                        public void onSuccess(List<Item> itemList) {
-                            int j = 0;
-                            showResult(itemList); // 검색 결과 보여줌
-                            Log.e("쇼리절트","=====================================" + j);
-                            j++;
-                        }
-
-                        @Override
-                        public void onFail() {
-                            Toast.makeText(getApplicationContext(), "Api키의 제한 트래픽이 초과되었습니다.", Toast.LENGTH_SHORT).show();
-                        }
-                    });
+            public void run() {
+                setToMyCurrentLocation();
+                Log.e("쓰레드 스타트","=======================");
             }
         });
+        thread.start();
+
+        Log.e("온크리에이트 끝","=======================");
+//        Log.e("온크리에이트 : 경도","================" + mCurrentLocation.getMapPointGeoCoord().latitude);
+//        Log.e("온크리에이트 : 경도","================" + mCurrentLocation.getMapPointGeoCoord().longitude);
+    }
+
+    //permission check
+    private void checkPermission() {
+        if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ) {
+            if( PermissionControl.checkPermission(this, REQ_PERMISSION) ){
+                return;
+            }
+        }else{
+            finish();
+        }
+    }
+
+    public void onClickSearchButton(View v){
+        String query = etSearch.getText().toString();
+        if(query == null || query.length() == 0){
+            Toast.makeText(getApplicationContext(), "검색어를 입력하세요!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        setToMyCurrentLocation();
+        hideSoftKeyboard();
+
+        MapPoint.GeoCoordinate geoCoordinate = mapView.getMapCenterPoint().getMapPointGeoCoord();
+
+        double latitude = geoCoordinate.latitude; //위도
+        double longtitude = geoCoordinate.longitude; //경도
+        int radius = 3000; // 중심좌표부터의 반경거리 특정지역을 중심으로 검색하려고 할 경우 사용한다. meter 단위(0~10000);
+        int page = 1; // 페이지번호 (1~3) 한페이지에 15개
+
+        Searcher searcher = new Searcher();
+        mapView.removeAllPOIItems(); // 기존 검색결과 삭제
+
+        searcher.searchKeyword(getApplicationContext(), query, latitude, longtitude, radius, page, DAUM_MAP_API_KEY, new OnFinishSearchListener() {
+            @Override
+            public void onSuccess(List<Item> itemList) {
+                int j = 0;
+                showResult(itemList); // 검색 결과 보여줌
+                Log.e("쇼리절트","=====================================" + j);
+                j++;
+            }
+            @Override
+            public void onFail() {
+                Toast.makeText(getApplicationContext(), "Api키의 제한 트래픽이 초과되었습니다.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void setToMyCurrentLocation(){
+        // onCurrentLocationUpdate에서 받아온 현재 위치값 == mCurrentLoaction 을 사용한다.
+        // 최소 1회는 gps를 통해 현재위치값을 받아 화면을 그리고
+        // 다음부터는 mCurrentLocation에 저장된 위치값으로 현재위치를 찍는다.
+        // mCurrentLocation값은 onCurrentLocationUpdate콜백함수가 3~5초 정도의 주기적인 간격으로 업데이트 한다.
+        if(mCurrentLocation != null){
+            mapView.moveCamera(CameraUpdateFactory.newMapPoint(mCurrentLocation));
+            Log.e("위치위치1","=======================");
+        }else{
+            mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeadingWithoutMapMoving);
+            mapView.moveCamera(CameraUpdateFactory.newMapPoint(mCurrentLocation));
+            Log.e("위치위치2","=======================");
+        }
+        Log.e("위치위치3","=======================");
+
     }
 
     //Create DaumMap Menu Button
@@ -109,9 +155,13 @@ public class DaumMapActivity extends AppCompatActivity implements MapView.MapVie
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
 
+        switch (item.getItemId()){
+            case R.id.current_location :
+                setToMyCurrentLocation();
+                break;
+        }
         return true;
     }
-
 
 
     private void hideSoftKeyboard() {
@@ -132,6 +182,7 @@ public class DaumMapActivity extends AppCompatActivity implements MapView.MapVie
             poiItem.setMapPoint(mapPoint);
             mapPointBounds.add(mapPoint);
 
+            //커스텀 마커를 사용할때
 //            poiItem.setMarkerType(MapPOIItem.MarkerType.CustomImage);
 //            poiItem.setCustomImageResourceId(R.drawable.map_pin_blue);
 //            poiItem.setSelectedMarkerType(MapPOIItem.MarkerType.CustomImage);
@@ -212,6 +263,13 @@ public class DaumMapActivity extends AppCompatActivity implements MapView.MapVie
 
     @Override
     public void onCurrentLocationUpdate(MapView mapView, MapPoint mapPoint, float v) {
+//        double latitude = mapView.getMapCenterPoint().getMapPointGeoCoord().latitude;
+//        double longtitude = mapView.getMapCenterPoint().getMapPointGeoCoord().longitude;
+
+        Log.e("온커런트로케이션업뎃 : 경도","================" + mapPoint.getMapPointGeoCoord().latitude);
+        Log.e("온커런트로케이션업뎃 : 경도","================" + mapPoint.getMapPointGeoCoord().longitude);
+
+        mCurrentLocation = mapPoint;
 
     }
 
@@ -228,5 +286,12 @@ public class DaumMapActivity extends AppCompatActivity implements MapView.MapVie
     @Override
     public void onCurrentLocationUpdateCancelled(MapView mapView) {
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOff);
+        mapView.setShowCurrentLocationMarker(false);
     }
 }
