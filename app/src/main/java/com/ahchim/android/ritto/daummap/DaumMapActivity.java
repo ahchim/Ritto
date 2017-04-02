@@ -21,7 +21,6 @@ import com.ahchim.android.ritto.daummap.search.Item;
 import com.ahchim.android.ritto.daummap.search.OnFinishSearchListener;
 import com.ahchim.android.ritto.daummap.search.Searcher;
 
-import net.daum.mf.map.api.CameraUpdate;
 import net.daum.mf.map.api.CameraUpdateFactory;
 import net.daum.mf.map.api.MapPOIItem;
 import net.daum.mf.map.api.MapPoint;
@@ -63,15 +62,6 @@ public class DaumMapActivity extends AppCompatActivity implements MapView.MapVie
         etSearch = (EditText) findViewById(R.id.etSearch);
         btnSearch = (Button) findViewById(R.id.btnSearch);
 
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                setToMyCurrentLocation();
-                Log.e("쓰레드 스타트","=======================");
-            }
-        });
-        thread.start();
-
         Log.e("온크리에이트 끝","=======================");
 //        Log.e("온크리에이트 : 경도","================" + mCurrentLocation.getMapPointGeoCoord().latitude);
 //        Log.e("온크리에이트 : 경도","================" + mCurrentLocation.getMapPointGeoCoord().longitude);
@@ -95,14 +85,13 @@ public class DaumMapActivity extends AppCompatActivity implements MapView.MapVie
             return;
         }
 
-        setToMyCurrentLocation();
         hideSoftKeyboard();
 
-        MapPoint.GeoCoordinate geoCoordinate = mapView.getMapCenterPoint().getMapPointGeoCoord();
+        MapPoint.GeoCoordinate geoCoordinate = mCurrentLocation.getMapPointGeoCoord();
 
         double latitude = geoCoordinate.latitude; //위도
         double longtitude = geoCoordinate.longitude; //경도
-        int radius = 3000; // 중심좌표부터의 반경거리 특정지역을 중심으로 검색하려고 할 경우 사용한다. meter 단위(0~10000);
+        int radius = 10000; // 중심좌표부터의 반경거리 특정지역을 중심으로 검색하려고 할 경우 사용한다. meter 단위(0~10000);
         int page = 1; // 페이지번호 (1~3) 한페이지에 15개
 
         Searcher searcher = new Searcher();
@@ -131,12 +120,12 @@ public class DaumMapActivity extends AppCompatActivity implements MapView.MapVie
         if(mCurrentLocation != null){
             mapView.moveCamera(CameraUpdateFactory.newMapPoint(mCurrentLocation));
             Log.e("위치위치1","=======================");
-        }else{
+        }else if(mCurrentLocation == null){
             mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeadingWithoutMapMoving);
             mapView.moveCamera(CameraUpdateFactory.newMapPoint(mCurrentLocation));
             Log.e("위치위치2","=======================");
         }
-        Log.e("위치위치3","=======================");
+        Log.e("위치위치3","======================="); //왜 이게 호출되는거냐..
 
     }
 
@@ -219,6 +208,7 @@ public class DaumMapActivity extends AppCompatActivity implements MapView.MapVie
         marker.setSelectedMarkerType(MapPOIItem.MarkerType.RedPin); // 마커를 클릭했을때, 기본으로 제공하는 RedPin 마커 모양.
 
         mapView.addPOIItem(marker);
+        setToMyCurrentLocation();
     }
 
     @Override
