@@ -1,6 +1,7 @@
 package com.ahchim.android.ritto.daummap;
 
 import android.content.Context;
+import android.location.LocationManager;
 import android.os.Build;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -41,6 +42,7 @@ public class DaumMapActivity extends AppCompatActivity implements MapView.MapVie
     private HashMap<Integer, Item> mTagItemMap = new HashMap<Integer, Item>();
 
     MapPoint mCurrentLocation = null;
+    MapPoint.GeoCoordinate geoCoordinate;
 
 
     @Override
@@ -78,6 +80,12 @@ public class DaumMapActivity extends AppCompatActivity implements MapView.MapVie
         }
     }
 
+    //gps on / off 여부 확인
+    public static boolean isAvailableGps(Context context) {
+        LocationManager lm = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
+        return lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+    }
+
     public void onClickSearchButton(View v){
         String query = etSearch.getText().toString();
         if(query == null || query.length() == 0){
@@ -86,8 +94,11 @@ public class DaumMapActivity extends AppCompatActivity implements MapView.MapVie
         }
 
         hideSoftKeyboard();
-
-        MapPoint.GeoCoordinate geoCoordinate = mCurrentLocation.getMapPointGeoCoord();
+        if(isAvailableGps(this)){
+            geoCoordinate = mCurrentLocation.getMapPointGeoCoord();
+        }else{
+            geoCoordinate = mapView.getMapCenterPoint().getMapPointGeoCoord();
+        }
 
         double latitude = geoCoordinate.latitude; //위도
         double longtitude = geoCoordinate.longitude; //경도
@@ -146,7 +157,11 @@ public class DaumMapActivity extends AppCompatActivity implements MapView.MapVie
 
         switch (item.getItemId()){
             case R.id.current_location :
-                setToMyCurrentLocation();
+                if(isAvailableGps(getApplicationContext())){
+                    setToMyCurrentLocation();
+                }else {
+                    Toast.makeText(this, "GPS가 켜져있지 않습니다!", Toast.LENGTH_SHORT).show();
+                }
                 break;
         }
         return true;
@@ -158,7 +173,7 @@ public class DaumMapActivity extends AppCompatActivity implements MapView.MapVie
         imm.hideSoftInputFromWindow(etSearch.getWindowToken(), 0);
     }
 
-    private void showResult(List<Item> itemList) {
+    public void showResult(List<Item> itemList) {
         MapPointBounds mapPointBounds = new MapPointBounds();
 
         for (int i = 0; i < itemList.size(); i++) {
@@ -208,7 +223,12 @@ public class DaumMapActivity extends AppCompatActivity implements MapView.MapVie
         marker.setSelectedMarkerType(MapPOIItem.MarkerType.RedPin); // 마커를 클릭했을때, 기본으로 제공하는 RedPin 마커 모양.
 
         mapView.addPOIItem(marker);
-        setToMyCurrentLocation();
+
+        if( isAvailableGps(getApplicationContext()) ){
+            setToMyCurrentLocation();
+        }else{
+            Toast.makeText(this, "GPS를 켜세요!", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
