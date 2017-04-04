@@ -1,8 +1,15 @@
 package com.ahchim.android.ritto.daummap;
 
+import android.Manifest;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.location.GpsStatus;
 import android.location.LocationManager;
 import android.os.Build;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,6 +21,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ahchim.android.ritto.PermissionControl;
@@ -31,18 +39,24 @@ import net.daum.mf.map.api.MapView;
 import java.util.HashMap;
 import java.util.List;
 
-public class DaumMapActivity extends AppCompatActivity implements MapView.MapViewEventListener, MapView.CurrentLocationEventListener{
+import static android.location.GpsStatus.GPS_EVENT_STARTED;
+import static android.location.GpsStatus.GPS_EVENT_STOPPED;
 
-    private static final String DAUM_MAP_API_KEY = "a14b32c93ef72e751b9a37ceea05fd95";
+public class DaumMapActivity extends AppCompatActivity implements MapView.MapViewEventListener, MapView.CurrentLocationEventListener {
+
+    private static final String DAUM_MAP_API_KEY = "521cddce9ca7dc1364a1f9ff00f13038";
     private final int REQ_PERMISSION = 100; // 권한요청코드
 
     EditText etSearch;
     Button btnSearch;
+    TextView mapViewCenterLocation;
     MapView mapView;
     private HashMap<Integer, Item> mTagItemMap = new HashMap<Integer, Item>();
 
     MapPoint mCurrentLocation = null;
     MapPoint.GeoCoordinate geoCoordinate;
+
+    BroadcastReceiver mReceiver;
 
 
     @Override
@@ -63,40 +77,64 @@ public class DaumMapActivity extends AppCompatActivity implements MapView.MapVie
 
         etSearch = (EditText) findViewById(R.id.etSearch);
         btnSearch = (Button) findViewById(R.id.btnSearch);
+        mapViewCenterLocation = (TextView) findViewById(R.id.mapViewCenterLocation);
 
-        Log.e("온크리에이트 끝","=======================");
+
+        //브로드캐스트의 액션을 등록하기 위한 인텐트 필터
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("android.location.PROVIDERS_CHANGED");
+
+        //동적리시버 구현
+        mReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if(isGPSAvailable()){
+                    showToast("켜졌지?");
+                }else {
+                    showToast("안켜졌을걸?");
+                }
+            }
+        };
+        //리시버 등록
+        registerReceiver(mReceiver, intentFilter);
+
+        if(isGPSAvailable()==false){
+            showToast("GPS가 켜져있지 않아요 아죠씨!");
+        }
+
+
+        Log.e("온크리에이트 끝", "=======================");
 //        Log.e("온크리에이트 : 경도","================" + mCurrentLocation.getMapPointGeoCoord().latitude);
 //        Log.e("온크리에이트 : 경도","================" + mCurrentLocation.getMapPointGeoCoord().longitude);
     }
 
     //permission check
     private void checkPermission() {
-        if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ) {
-            if( PermissionControl.checkPermission(this, REQ_PERMISSION) ){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (PermissionControl.checkPermission(this, REQ_PERMISSION)) {
                 return;
             }
-        }else{
+        } else {
             finish();
         }
     }
 
-    //gps on / off 여부 확인
-    public static boolean isAvailableGps(Context context) {
-        LocationManager lm = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
-        return lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
-    }
-
-    public void onClickSearchButton(View v){
+    public void onClickSearchButton(View v) {
         String query = etSearch.getText().toString();
-        if(query == null || query.length() == 0){
+        if (query == null || query.length() == 0) {
             Toast.makeText(getApplicationContext(), "검색어를 입력하세요!", Toast.LENGTH_SHORT).show();
             return;
         }
 
         hideSoftKeyboard();
-        if(isAvailableGps(this)){
-            geoCoordinate = mCurrentLocation.getMapPointGeoCoord();
-        }else{
+
+        if (isGPSAvailable()) {
+            if (mCurrentLocation != null) {
+                geoCoordinate = mCurrentLocation.getMapPointGeoCoord();
+            } else {
+                Toast.makeText(this, "아직 위치정보를 잡지 못했습니다! 잠시후 시도해 주세요", Toast.LENGTH_LONG);
+            }
+        } else {
             geoCoordinate = mapView.getMapCenterPoint().getMapPointGeoCoord();
         }
 
@@ -113,31 +151,46 @@ public class DaumMapActivity extends AppCompatActivity implements MapView.MapVie
             public void onSuccess(List<Item> itemList) {
                 int j = 0;
                 showResult(itemList); // 검색 결과 보여줌
-                Log.e("쇼리절트","=====================================" + j);
+                Log.e("쇼리절트", "=====================================" + j);
                 j++;
             }
+
             @Override
             public void onFail() {
-                Toast.makeText(getApplicationContext(), "Api키의 제한 트래픽이 초과되었습니다.", Toast.LENGTH_SHORT).show();
+                showToast("Api키의 제한 트래픽이 초과되었습니다");
             }
         });
     }
 
-    public void setToMyCurrentLocation(){
+    public void setToMyCurrentLocation() {
         // onCurrentLocationUpdate에서 받아온 현재 위치값 == mCurrentLoaction 을 사용한다.
         // 최소 1회는 gps를 통해 현재위치값을 받아 화면을 그리고
         // 다음부터는 mCurrentLocation에 저장된 위치값으로 현재위치를 찍는다.
         // mCurrentLocation값은 onCurrentLocationUpdate콜백함수가 3~5초 정도의 주기적인 간격으로 업데이트 한다.
-        if(mCurrentLocation != null){
+
+        if (mCurrentLocation != null) {
             mapView.moveCamera(CameraUpdateFactory.newMapPoint(mCurrentLocation));
-            Log.e("위치위치1","=======================");
-        }else if(mCurrentLocation == null){
+            Log.e("위치위치1", "=======================");
+        } else if (mCurrentLocation == null) {
+            //showToast("GPS 안켜져있다니까요 아죠씨?");
             mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeadingWithoutMapMoving);
             mapView.moveCamera(CameraUpdateFactory.newMapPoint(mCurrentLocation));
-            Log.e("위치위치2","=======================");
         }
-        Log.e("위치위치3","======================="); //왜 이게 호출되는거냐..
+    }
 
+    public boolean isGPSAvailable() {
+        LocationManager lm = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+        return lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+    }
+
+    //스레드 안에서 ui변경 불가하기 때문에..
+    private void showToast(final String text) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(DaumMapActivity.this, text, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     //Create DaumMap Menu Button
@@ -157,11 +210,7 @@ public class DaumMapActivity extends AppCompatActivity implements MapView.MapVie
 
         switch (item.getItemId()){
             case R.id.current_location :
-                if(isAvailableGps(getApplicationContext())){
-                    setToMyCurrentLocation();
-                }else {
-                    Toast.makeText(this, "GPS가 켜져있지 않습니다!", Toast.LENGTH_SHORT).show();
-                }
+                setToMyCurrentLocation();
                 break;
         }
         return true;
@@ -173,7 +222,7 @@ public class DaumMapActivity extends AppCompatActivity implements MapView.MapVie
         imm.hideSoftInputFromWindow(etSearch.getWindowToken(), 0);
     }
 
-    public void showResult(List<Item> itemList) {
+    private void showResult(List<Item> itemList) {
         MapPointBounds mapPointBounds = new MapPointBounds();
 
         for (int i = 0; i < itemList.size(); i++) {
@@ -223,12 +272,7 @@ public class DaumMapActivity extends AppCompatActivity implements MapView.MapVie
         marker.setSelectedMarkerType(MapPOIItem.MarkerType.RedPin); // 마커를 클릭했을때, 기본으로 제공하는 RedPin 마커 모양.
 
         mapView.addPOIItem(marker);
-
-        if( isAvailableGps(getApplicationContext()) ){
-            setToMyCurrentLocation();
-        }else{
-            Toast.makeText(this, "GPS를 켜세요!", Toast.LENGTH_SHORT).show();
-        }
+        setToMyCurrentLocation();
     }
 
     @Override
@@ -281,6 +325,10 @@ public class DaumMapActivity extends AppCompatActivity implements MapView.MapVie
 
         mCurrentLocation = mapPoint;
 
+        mapPoint.getMapPointScreenLocation();
+
+        //mapViewCenterLocation.setText();
+
     }
 
     @Override
@@ -300,6 +348,8 @@ public class DaumMapActivity extends AppCompatActivity implements MapView.MapVie
 
     @Override
     protected void onDestroy() {
+        //리시버해제... 여기서 해제해도 될런지는 모르겠지만..
+        unregisterReceiver(mReceiver);
         super.onDestroy();
         mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOff);
         mapView.setShowCurrentLocationMarker(false);

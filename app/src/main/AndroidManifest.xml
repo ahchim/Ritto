@@ -22,6 +22,7 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -29,12 +30,25 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".qrCodeReader.BaseScannerActivity" />
-        <activity android:name=".qrCodeReader.FullScannerFragmentActivity" />
-        <activity android:name=".WebActivity" />
+        <activity android:name=".qrCodeReader.BaseScannerActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize">
+        </activity>
+        <activity android:name=".qrCodeReader.FullScannerFragmentActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize">
+        </activity>
+        <activity android:name=".WebActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize">
+        </activity>
         <activity android:name=".navermap.FragmentMapActivity" />
-        <activity android:name=".navermap.NMapViewer"></activity>
-        <activity android:name=".daummap.DaumMapActivity"></activity>
+        <activity android:name=".navermap.NMapViewer"/>
+        <activity android:name=".daummap.DaumMapActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"            >
+            <!--
+            <intent-filter>
+                <action android:name="android.location.PROVIDERS_CHANGED" />
+            </intent-filter>
+            -->
+        </activity>
         <activity android:name=".daummap.search.LocationDemoActivity"></activity>
     </application>
 

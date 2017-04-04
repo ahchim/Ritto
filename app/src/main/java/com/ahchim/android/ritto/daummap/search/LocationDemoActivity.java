@@ -38,7 +38,7 @@ public class LocationDemoActivity extends FragmentActivity implements MapView.Cu
         setContentView(R.layout.demo_nested_mapview);
 
         mMapView = (MapView) findViewById(R.id.map_view);
-        mMapView.setDaumMapApiKey("a14b32c93ef72e751b9a37ceea05fd95");
+        mMapView.setDaumMapApiKey("521cddce9ca7dc1364a1f9ff00f13038");
         mMapView.setCurrentLocationEventListener(this);
     }
 
