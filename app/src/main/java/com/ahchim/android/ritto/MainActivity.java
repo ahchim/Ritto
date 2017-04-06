@@ -69,6 +69,23 @@ public class MainActivity extends AppCompatActivity
         PopupMenu popup = new PopupMenu(this, v);
         MenuInflater inflater = popup.getMenuInflater();
         inflater.inflate(R.menu.generate_number, popup.getMenu());
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                Intent intent;
+                switch (item.getItemId()){
+                    case R.id.action_random_number :
+                        intent = new Intent(MainActivity.this, AutoGenActivity.class);
+                        startActivity(intent);
+                        break;
+                    case R.id.action_input_number :
+                        intent = new Intent(MainActivity.this, DirectGenActivity.class);
+                        startActivity(intent);
+                        break;
+                }
+                return false;
+            }
+        });
         popup.show();
     }
 
@@ -76,6 +93,30 @@ public class MainActivity extends AppCompatActivity
         PopupMenu popup = new PopupMenu(this, v);
         MenuInflater inflater = popup.getMenuInflater();
         inflater.inflate(R.menu.list_number, popup.getMenu());
+
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                Intent intent;
+                switch (item.getItemId()){
+                    case R.id.action_generated_numbers :
+                        intent = new Intent(MainActivity.this, GeneratedNumListActivity.class);
+                        startActivity(intent);
+                        break;
+                    case R.id.action_past_winning_numbers :
+                        intent = new Intent(MainActivity.this, PastWinNumActivity.class);
+                        startActivity(intent);
+                        break;
+                    case R.id.action_purchased_numbers :
+                        intent = new Intent(MainActivity.this, PurchasedNumActivity.class);
+                        startActivity(intent);
+                        break;
+                }
+
+                return false;
+            }
+        });
+
         popup.show();
     }
 

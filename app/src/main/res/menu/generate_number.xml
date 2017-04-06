@@ -11,8 +11,4 @@
         android:title="번호 직접입력"
         app:showAsAction="never" />
 
-    <item
-        android:id="@+id/action_qr_number"
-        android:title="QR코드로 입력"
-        app:showAsAction="never" />
 </menu>

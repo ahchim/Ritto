@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.location.GpsStatus;
 import android.location.LocationManager;
 import android.os.Build;
 import android.support.v4.app.ActivityCompat;
@@ -34,22 +33,21 @@ import net.daum.mf.map.api.CameraUpdateFactory;
 import net.daum.mf.map.api.MapPOIItem;
 import net.daum.mf.map.api.MapPoint;
 import net.daum.mf.map.api.MapPointBounds;
+import net.daum.mf.map.api.MapReverseGeoCoder; //기능이 제대로 동작하지 않고, 트래픽을 많이 먹으므로 기능을 삭제함.
 import net.daum.mf.map.api.MapView;
 
 import java.util.HashMap;
 import java.util.List;
 
-import static android.location.GpsStatus.GPS_EVENT_STARTED;
-import static android.location.GpsStatus.GPS_EVENT_STOPPED;
 
-public class DaumMapActivity extends AppCompatActivity implements MapView.MapViewEventListener, MapView.CurrentLocationEventListener {
+public class DaumMapActivity extends AppCompatActivity implements MapView.MapViewEventListener,
+        MapView.CurrentLocationEventListener {
 
     private static final String DAUM_MAP_API_KEY = "521cddce9ca7dc1364a1f9ff00f13038";
     private final int REQ_PERMISSION = 100; // 권한요청코드
 
     EditText etSearch;
     Button btnSearch;
-    TextView mapViewCenterLocation;
     MapView mapView;
     private HashMap<Integer, Item> mTagItemMap = new HashMap<Integer, Item>();
 
@@ -77,8 +75,6 @@ public class DaumMapActivity extends AppCompatActivity implements MapView.MapVie
 
         etSearch = (EditText) findViewById(R.id.etSearch);
         btnSearch = (Button) findViewById(R.id.btnSearch);
-        mapViewCenterLocation = (TextView) findViewById(R.id.mapViewCenterLocation);
-
 
         //브로드캐스트의 액션을 등록하기 위한 인텐트 필터
         IntentFilter intentFilter = new IntentFilter();
@@ -101,7 +97,6 @@ public class DaumMapActivity extends AppCompatActivity implements MapView.MapVie
         if(isGPSAvailable()==false){
             showToast("GPS가 켜져있지 않아요 아죠씨!");
         }
-
 
         Log.e("온크리에이트 끝", "=======================");
 //        Log.e("온크리에이트 : 경도","================" + mCurrentLocation.getMapPointGeoCoord().latitude);
@@ -325,10 +320,6 @@ public class DaumMapActivity extends AppCompatActivity implements MapView.MapVie
 
         mCurrentLocation = mapPoint;
 
-        mapPoint.getMapPointScreenLocation();
-
-        //mapViewCenterLocation.setText();
-
     }
 
     @Override
@@ -354,4 +345,5 @@ public class DaumMapActivity extends AppCompatActivity implements MapView.MapVie
         mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOff);
         mapView.setShowCurrentLocationMarker(false);
     }
+
 }

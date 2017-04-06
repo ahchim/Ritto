@@ -21,8 +21,8 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name"
             android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -30,26 +30,34 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".qrCodeReader.BaseScannerActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize">
-        </activity>
-        <activity android:name=".qrCodeReader.FullScannerFragmentActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize">
-        </activity>
-        <activity android:name=".WebActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize">
-        </activity>
+        <activity
+            android:name=".qrCodeReader.BaseScannerActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize" />
+        <activity
+            android:name=".qrCodeReader.FullScannerFragmentActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize" />
+        <activity
+            android:name=".WebActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity android:name=".navermap.FragmentMapActivity" />
-        <activity android:name=".navermap.NMapViewer"/>
-        <activity android:name=".daummap.DaumMapActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"            >
+        <activity android:name=".navermap.NMapViewer" />
+        <activity
+            android:name=".daummap.DaumMapActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize">
+
             <!--
             <intent-filter>
                 <action android:name="android.location.PROVIDERS_CHANGED" />
             </intent-filter>
             -->
         </activity>
-        <activity android:name=".daummap.search.LocationDemoActivity"></activity>
+        <activity android:name=".daummap.search.LocationDemoActivity" />
+        <activity android:name=".AutoGenActivity" />
+        <activity android:name=".DirectGenActivity" />
+        <activity android:name=".GeneratedNumListActivity" />
+        <activity android:name=".PastWinNumActivity" />
+        <activity android:name=".PurchasedNumActivity" />
+        <activity android:name=".DirectNumSelectActivity"></activity>
     </application>
 
 </manifest>
