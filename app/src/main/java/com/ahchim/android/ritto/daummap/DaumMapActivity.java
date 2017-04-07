@@ -1,14 +1,11 @@
 package com.ahchim.android.ritto.daummap;
 
-import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.os.Build;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -20,7 +17,6 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ahchim.android.ritto.PermissionControl;
@@ -163,18 +159,23 @@ public class DaumMapActivity extends AppCompatActivity implements MapView.MapVie
         // 다음부터는 mCurrentLocation에 저장된 위치값으로 현재위치를 찍는다.
         // mCurrentLocation값은 onCurrentLocationUpdate콜백함수가 3~5초 정도의 주기적인 간격으로 업데이트 한다.
 
-        if (mCurrentLocation != null) {
+        if (isGPSAvailable() && mCurrentLocation != null) {
             mapView.moveCamera(CameraUpdateFactory.newMapPoint(mCurrentLocation));
             Log.e("위치위치1", "=======================");
-        } else if (mCurrentLocation == null) {
+            Log.e("mCurrentLocation", "=======================" + mCurrentLocation);
+        } else {
             //showToast("GPS 안켜져있다니까요 아죠씨?");
-            mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeadingWithoutMapMoving);
-            mapView.moveCamera(CameraUpdateFactory.newMapPoint(mCurrentLocation));
+//            mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeadingWithoutMapMoving);
+//            mapView.moveCamera(CameraUpdateFactory.newMapPoint(mCurrentLocation));
+            Log.e("위치위치2", "=======================");
+            Log.e("mCurrentLocation", "=======================" + mCurrentLocation);
+
         }
     }
 
     public boolean isGPSAvailable() {
         LocationManager lm = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+        mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeadingWithoutMapMoving);
         return lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
     }
 
@@ -210,7 +211,6 @@ public class DaumMapActivity extends AppCompatActivity implements MapView.MapVie
         }
         return true;
     }
-
 
     private void hideSoftKeyboard() {
         InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);

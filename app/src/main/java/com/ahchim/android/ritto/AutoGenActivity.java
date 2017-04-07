@@ -10,8 +10,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -26,12 +28,16 @@ public class AutoGenActivity extends AppCompatActivity implements View.OnClickLi
 
     ArrayList<Integer> selectedNumber = new ArrayList<>();
     ArrayList<Integer> exceptNumber = new ArrayList<>();
-    ArrayList<Integer> generatedNumber = new ArrayList<>();
+    ArrayList<Integer> generatedNumber;
+
+    ArrayAdapter<?> adapter;
 
     Ascending ascending;
 
     LinearLayout ll_inner_container;
     LinearLayout ll_inner_container_except;
+
+    ListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +49,8 @@ public class AutoGenActivity extends AppCompatActivity implements View.OnClickLi
 
         ll_inner_container = (LinearLayout) findViewById(R.id.ll_inner_container);
         ll_inner_container_except = (LinearLayout) findViewById(R.id.ll_inner_container_except);
+
+        listView = (ListView) findViewById(R.id.listView);
 
         btnSelect1 = (Button) findViewById(R.id.btnSelect);
         btnSelect2 = (Button) findViewById(R.id.btnSelect2);
@@ -138,9 +146,19 @@ public class AutoGenActivity extends AppCompatActivity implements View.OnClickLi
         if (requestCode == 100){
             ll_inner_container.setGravity(Gravity.LEFT);
             ll_inner_container.addView(v);
-        } else {
+        } else if (requestCode == 200) {
             ll_inner_container_except.setGravity(Gravity.LEFT);
             ll_inner_container_except.addView(v);
+        } else {
+            listView.addView(v);
+
+//            if(adapter != null){
+//                adapter.notifyDataSetChanged();
+//            }else {
+//                adapter = new ArrayAdapter<Object>(this, R.layout.num_select_list);
+//                listView.setAdapter(adapter);
+//            }
+
         }
 
     }
@@ -170,6 +188,8 @@ public class AutoGenActivity extends AppCompatActivity implements View.OnClickLi
         }
         Log.e("ranNumber, 제외지움","=================" + ranNumber);
 
+        generatedNumber = new ArrayList<>();
+
         //만든수에 포함하고싶은숫자 넣어준다.
         for(int j=0; j<6-selectedNumber.size(); j++){
             generatedNumber.add(j, ranNumber.get(j));
@@ -180,6 +200,9 @@ public class AutoGenActivity extends AppCompatActivity implements View.OnClickLi
         //그 후 정렬
         Collections.sort(generatedNumber, ascending);
         Log.e("Sorted generatedNumber","=================" + generatedNumber);
+
+
+        //inflateNumber(generatedNumber, 300);
 
     }
 
