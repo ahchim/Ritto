@@ -40,29 +40,6 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ll_container_want" />
 
-    <LinearLayout
-        android:id="@+id/ll_container_except"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_marginTop="0dp"
-        android:gravity="right|center_vertical"
-        android:orientation="horizontal"
-        android:weightSum="1"
-        app:layout_constraintDimensionRatio="h,1:1"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView"
-        android:layout_marginLeft="0dp"
-        android:layout_marginRight="0dp">
-
-        <Button
-            android:id="@+id/btnSelect2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="번호지정" />
-    </LinearLayout>
-
     <TextView
         android:id="@+id/textView3"
         android:layout_width="0dp"
@@ -80,7 +57,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ll_container_except" />
+        app:layout_constraintTop_toBottomOf="@+id/ll_container" />
 
     <Button
         android:id="@+id/btnGen1"
@@ -146,6 +123,37 @@
         app:layout_constraintTop_toTopOf="@+id/textView3" />
 
     <LinearLayout
+        android:id="@+id/ll_container"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginTop="-1dp"
+        android:gravity="right|center_vertical"
+        android:orientation="horizontal"
+        android:weightSum="1"
+        app:layout_constraintDimensionRatio="h,1:1"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView">
+
+        <LinearLayout
+            android:id="@+id/ll_inner_container_except"
+            android:layout_width="295dp"
+            android:layout_height="59dp"
+            android:orientation="horizontal">
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnSelect2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="번호지정" />
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/ll_container_want"
         android:layout_width="match_parent"
         android:layout_height="60dp"
@@ -158,6 +166,14 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView2">
+
+        <LinearLayout
+            android:id="@+id/ll_inner_container"
+            android:layout_width="295dp"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+        </LinearLayout>
 
         <Button
             android:id="@+id/btnSelect"

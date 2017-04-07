@@ -14,6 +14,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class DirectNumSelectActivity extends AppCompatActivity {
 
     Button btnSelect;
@@ -23,7 +26,7 @@ public class DirectNumSelectActivity extends AppCompatActivity {
     int a = 1;
     int numSelectCounter = 0;
 
-    int selectedNumberList[] = new int[6];
+    ArrayList<Integer> selectedNumberList = new ArrayList<>();
 
     LinearLayout linearLayout;
     TextView lottoNum1;
@@ -112,6 +115,7 @@ public class DirectNumSelectActivity extends AppCompatActivity {
                                         }
                                         ((TextView)v).setPaintFlags(1);
                                         numSelectCounter = numSelectCounter + 1;
+                                        selectedNumberList.add(v.getId());
 
                                     }else {
                                         Toast.makeText(DirectNumSelectActivity.this, "5개까지만 선택 가능해요!", Toast.LENGTH_SHORT).show();
@@ -122,6 +126,7 @@ public class DirectNumSelectActivity extends AppCompatActivity {
                                     v.setBackgroundResource(R.mipmap.ball_unselect);
                                     ((TextView)v).setPaintFlags(0);
                                     numSelectCounter = numSelectCounter - 1;
+                                    selectedNumberList.remove((Object)v.getId()); //오브젝트 타입으로 바꿔주어야 인덱스로 삭제하는게 아닌 값으로 삭제를 할 수 있다.
                                     break;
                             }
                     }
@@ -151,15 +156,13 @@ public class DirectNumSelectActivity extends AppCompatActivity {
                     Toast.makeText(DirectNumSelectActivity.this, "번호를 1개 이상 선택해 주십쇼!", Toast.LENGTH_SHORT).show();
                 } else {
                     Intent returnIntent = new Intent(DirectNumSelectActivity.this, AutoGenActivity.class);
-                    returnIntent.putExtra("result", selectedNumberList);
+                    returnIntent.putIntegerArrayListExtra("result", selectedNumberList);
                     setResult(RESULT_OK, returnIntent);
+                    Log.e("과연 어떤값이?","=================" + selectedNumberList);
                     finish();
                 }
             }
         });
-
-
-
     }
 
 
