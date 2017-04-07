@@ -1,6 +1,7 @@
 package com.ahchim.android.ritto;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -9,12 +10,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ArrayAdapter;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,7 +35,7 @@ public class AutoGenActivity extends AppCompatActivity implements View.OnClickLi
     ArrayList<Integer> exceptNumber = new ArrayList<>();
     ArrayList<Integer> generatedNumber;
 
-    ArrayAdapter<?> adapter;
+    ArrayList<ArrayList<Integer>> allGeneratedNumber = new ArrayList<>();
 
     Ascending ascending;
 
@@ -38,6 +43,7 @@ public class AutoGenActivity extends AppCompatActivity implements View.OnClickLi
     LinearLayout ll_inner_container_except;
 
     ListView listView;
+    EditText howManyNum;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +66,8 @@ public class AutoGenActivity extends AppCompatActivity implements View.OnClickLi
         btnSelect2.setOnClickListener(this);
         btnGen.setOnClickListener(this);
 
+        howManyNum = (EditText) findViewById(R.id.howManyNum);
+
         ascending = new Ascending();
 
     }
@@ -77,7 +85,17 @@ public class AutoGenActivity extends AppCompatActivity implements View.OnClickLi
                 startActivityForResult(intent, REQUEST_CODE_2);
                 break;
             case R.id.btnGen1 :
-                generateRandomNumber(selectedNumber, exceptNumber);
+                int howMany = Integer.parseInt(howManyNum.getText().toString());
+                if( howMany > 0 && howMany < 6){
+
+                    generateRandomNumber(selectedNumber, exceptNumber, howMany-1);
+
+                    ListViewAdapter adapter = new ListViewAdapter(this, generatedNumber, R.layout.list_view_item_auto_gen, howMany , allGeneratedNumber);
+                    adapter.notifyDataSetChanged();
+                    listView.setAdapter(adapter);
+                } else {
+                    Toast.makeText(this, "0 이상 5이하의 정수를 입력하세요!", Toast.LENGTH_SHORT).show();
+                }
                 break;
         }
     }
@@ -103,8 +121,6 @@ public class AutoGenActivity extends AppCompatActivity implements View.OnClickLi
 
             inflateNumber(exceptNumber, requestCode);
         }
-
-
     }
 
     //포함하고싶은숫자, 제외하고싶은숫자 동적뷰 만들기
@@ -149,66 +165,55 @@ public class AutoGenActivity extends AppCompatActivity implements View.OnClickLi
         } else if (requestCode == 200) {
             ll_inner_container_except.setGravity(Gravity.LEFT);
             ll_inner_container_except.addView(v);
-        } else {
-            listView.addView(v);
-
-//            if(adapter != null){
-//                adapter.notifyDataSetChanged();
-//            }else {
-//                adapter = new ArrayAdapter<Object>(this, R.layout.num_select_list);
-//                listView.setAdapter(adapter);
-//            }
-
         }
-
     }
 
 
-    public void generateRandomNumber(ArrayList<Integer> selectedNumber, ArrayList<Integer> exceptNumber){
-        ArrayList<Integer> ranNumber = new ArrayList<>();
-        for(int i=1; i<=45; i++){
-            ranNumber.add(i);
+    public void generateRandomNumber(ArrayList<Integer> selectedNumber, ArrayList<Integer> exceptNumber, int howMany){
+
+        for (int p = 0; p <= howMany; p++){
+
+            ArrayList<Integer> ranNumber = new ArrayList<>();
+            for(int j=1; j<=45; j++){
+                ranNumber.add(j);
+            }
+
+            //1부터 45까지의 중복없는 숫자를 랜덤하게 섞고,
+            Collections.shuffle(ranNumber);
+            Log.e("ranNumber","=================" + ranNumber);
+            Log.e("selectedNumber","=================" + selectedNumber);
+            Log.e("exceptNumber","=================" + exceptNumber);
+
+            //ranNumber에서 포함하고싶은 숫자 제거
+            for(int i=0; i<selectedNumber.size(); i++){
+                ranNumber.remove(selectedNumber.get(i));
+            }
+            Log.e("ranNumber, 포함지움","=================" + ranNumber);
+
+            //ranNumber에서 제외하고싶은 숫자 제거
+            for(int i=0; i<exceptNumber.size(); i++){
+                ranNumber.remove(exceptNumber.get(i));
+            }
+            Log.e("ranNumber, 제외지움","=================" + ranNumber);
+
+            generatedNumber = new ArrayList<>();
+
+            //만든수에 포함하고싶은숫자 넣어준다.
+            for(int k=0; k<6-selectedNumber.size(); k++){
+                generatedNumber.add(k, ranNumber.get(k));
+            }
+            generatedNumber.addAll(selectedNumber);
+            Log.e("generatedNumber","=================" + generatedNumber);
+
+            //그 후 정렬
+            Collections.sort(generatedNumber, ascending);
+            Log.e("Sorted generatedNumber","=================" + generatedNumber);
+
+            allGeneratedNumber.add(p, generatedNumber);
+            Log.e("allGeneratedNumber","=================" + allGeneratedNumber);
+
         }
-
-        //1부터 45까지의 중복없는 숫자를 랜덤하게 섞고,
-        Collections.shuffle(ranNumber);
-        Log.e("ranNumber","=================" + ranNumber);
-        Log.e("selectedNumber","=================" + selectedNumber);
-        Log.e("exceptNumber","=================" + exceptNumber);
-
-        //ranNumber에서 포함하고싶은 숫자 제거
-        for(int i=0; i<selectedNumber.size(); i++){
-            ranNumber.remove(selectedNumber.get(i));
-        }
-        Log.e("ranNumber, 포함지움","=================" + ranNumber);
-
-        //ranNumber에서 제외하고싶은 숫자 제거
-        for(int i=0; i<exceptNumber.size(); i++){
-            ranNumber.remove(exceptNumber.get(i));
-        }
-        Log.e("ranNumber, 제외지움","=================" + ranNumber);
-
-        generatedNumber = new ArrayList<>();
-
-        //만든수에 포함하고싶은숫자 넣어준다.
-        for(int j=0; j<6-selectedNumber.size(); j++){
-            generatedNumber.add(j, ranNumber.get(j));
-        }
-        generatedNumber.addAll(selectedNumber);
-        Log.e("generatedNumber","=================" + generatedNumber);
-
-        //그 후 정렬
-        Collections.sort(generatedNumber, ascending);
-        Log.e("Sorted generatedNumber","=================" + generatedNumber);
-
-
-        //inflateNumber(generatedNumber, 300);
-
     }
-
-
-
-
 
     //오름차순
     class Ascending implements Comparator<Integer>{
@@ -226,7 +231,78 @@ public class AutoGenActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
+    //리스트뷰 어댑터클래스
+    public class ListViewAdapter extends BaseAdapter{
+
+        Context context;
+        LayoutInflater inflater;
+        int layout;
+        int howMany;
+        ArrayList<Integer> arrayList1 = new ArrayList<>();
+        ArrayList<ArrayList<Integer>> allGeneratedNum = new ArrayList<>();
+
+        public ListViewAdapter(Context context, ArrayList<Integer> arrayList, int layout, int howMany, ArrayList<ArrayList<Integer>> allGeneratedNum){
+            this.context = context;
+            this.arrayList1 = arrayList;
+            this.layout = layout;
+            this.howMany = howMany;
+            this.allGeneratedNum = allGeneratedNum;
+            inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        }
+
+        // 깊은 깨달음! -> getCount() 함수의 리턴값으로 정해준 수가 -> getView()를 그 수만큼 실행시킨다!!!
+        @Override
+        public int getCount() {
+            return howMany;
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return allGeneratedNum.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+
+            if(convertView == null){
+                convertView = inflater.inflate(layout, parent, false);
+            }
+
+            TextView num1 = (TextView) convertView.findViewById(R.id.num1);
+            TextView num2 = (TextView) convertView.findViewById(R.id.num2);
+            TextView num3 = (TextView) convertView.findViewById(R.id.num3);
+            TextView num4 = (TextView) convertView.findViewById(R.id.num4);
+            TextView num5 = (TextView) convertView.findViewById(R.id.num5);
+            TextView num6 = (TextView) convertView.findViewById(R.id.num6);
+
+            Log.e("arrayList1","===========================" + arrayList1);
+
+            //allGeneratedNum.get(position).get(0) -> 이게 중요해.........
+            num1.setText(allGeneratedNum.get(position).get(0) + "");
+            num2.setText(allGeneratedNum.get(position).get(1) + "");
+            num3.setText(allGeneratedNum.get(position).get(2) + "");
+            num4.setText(allGeneratedNum.get(position).get(3) + "");
+            num5.setText(allGeneratedNum.get(position).get(4) + "");
+            num6.setText(allGeneratedNum.get(position).get(5) + "");
 
 
+            return convertView;
+        }
+    }
+
+    //제네레이트 된 번호들을 모은다. 최대 5개    -->  개 뻘짓의 산물
+//    public class GeneratedItemNumber {
+//        ArrayList<Integer> item;
+//
+//        public GeneratedItemNumber(ArrayList<Integer> items) {
+//            item = new ArrayList<>();
+//            item = items;
+//        }
+//    }
 
 }
