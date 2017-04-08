@@ -52,12 +52,13 @@
             -->
         </activity>
         <activity android:name=".daummap.search.LocationDemoActivity" />
-        <activity android:name=".AutoGenActivity" />
-        <activity android:name=".DirectGenActivity" />
+        <activity
+            android:name=".AutoGenActivity"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustNothing" />
         <activity android:name=".GeneratedNumListActivity" />
         <activity android:name=".PastWinNumActivity" />
         <activity android:name=".PurchasedNumActivity" />
-        <activity android:name=".DirectNumSelectActivity"></activity>
+        <activity android:name=".DirectNumSelectActivity"/>
     </application>
 
 </manifest>

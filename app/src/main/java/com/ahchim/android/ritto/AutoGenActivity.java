@@ -8,9 +8,11 @@ import android.graphics.Typeface;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.InputFilter;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -24,6 +26,8 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+
+import static android.text.InputType.TYPE_CLASS_NUMBER;
 
 public class AutoGenActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -51,6 +55,10 @@ public class AutoGenActivity extends AppCompatActivity implements View.OnClickLi
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("로또 번호 생성");
+        if(actionBar != null){
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+
         setContentView(R.layout.activity_auto_gen);
 
         ll_inner_container = (LinearLayout) findViewById(R.id.ll_inner_container);
@@ -67,6 +75,8 @@ public class AutoGenActivity extends AppCompatActivity implements View.OnClickLi
         btnGen.setOnClickListener(this);
 
         howManyNum = (EditText) findViewById(R.id.howManyNum);
+        howManyNum.setInputType(TYPE_CLASS_NUMBER);
+        howManyNum.setFilters(new InputFilter[]{new InputFilter.LengthFilter(1)}); //글자수 1자로 제한
 
         ascending = new Ascending();
 
@@ -78,18 +88,26 @@ public class AutoGenActivity extends AppCompatActivity implements View.OnClickLi
         switch (v.getId()){
             case R.id.btnSelect :
                 intent = new Intent(AutoGenActivity.this, DirectNumSelectActivity.class);
+                intent.putExtra("REQUEST_CODE", REQUEST_CODE_1);
                 startActivityForResult(intent, REQUEST_CODE_1);
                 break;
             case R.id.btnSelect2 :
                 intent = new Intent(AutoGenActivity.this, DirectNumSelectActivity.class);
+                intent.putExtra("REQUEST_CODE", REQUEST_CODE_2);
                 startActivityForResult(intent, REQUEST_CODE_2);
                 break;
             case R.id.btnGen1 :
-                int howMany = Integer.parseInt(howManyNum.getText().toString());
+                int howMany = 0;
+
+                //문자 입력 예방 예외처리
+                try{
+                    howMany = Integer.parseInt(howManyNum.getText().toString().trim());
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
                 if( howMany > 0 && howMany < 6){
-
                     generateRandomNumber(selectedNumber, exceptNumber, howMany-1);
-
                     ListViewAdapter adapter = new ListViewAdapter(this, generatedNumber, R.layout.list_view_item_auto_gen, howMany , allGeneratedNumber);
                     adapter.notifyDataSetChanged();
                     listView.setAdapter(adapter);
@@ -98,6 +116,17 @@ public class AutoGenActivity extends AppCompatActivity implements View.OnClickLi
                 }
                 break;
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home :
+                //NavUtils.navigateUpFromSameTask(this); : A -> B -> C -> D 의 navi 버튼 클릭 -> A // 아래 깔려있던 액티비티 전부 destroy
+                finish();
+                return true; // 무슨역할인지는 모름. 아무역할도 아닐수 있음
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

@@ -8,14 +8,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.util.ArrayList;
-import java.util.List;
 
 public class DirectNumSelectActivity extends AppCompatActivity {
 
@@ -23,28 +22,71 @@ public class DirectNumSelectActivity extends AppCompatActivity {
 
     int start = 1;
     int limit = 7;
+    int switchLimit = 0;
     int a = 1;
     int numSelectCounter = 0;
 
+
     ArrayList<Integer> selectedNumberList = new ArrayList<>();
 
-    LinearLayout linearLayout;
-    TextView lottoNum1;
+    LinearLayout linearLayout, ll_select_result;
+    TextView lottoNum1, textView5;
+    public static int REQUEST_CODE_DIRECT;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        REQUEST_CODE_DIRECT = getIntent().getExtras().getInt("REQUEST_CODE");
+        Log.e("REQUEST_CODE_DIRECT","=======================" + REQUEST_CODE_DIRECT);
+
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle("포함할 번호 선택");
+        if(actionBar != null){
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+
+        if(REQUEST_CODE_DIRECT == 300) {
+            actionBar.setTitle("번호 직접 입력");
+            Log.e("REQUEST_CODE_DIRECT","===================" + REQUEST_CODE_DIRECT);
+        } else if (REQUEST_CODE_DIRECT == 100) {
+            actionBar.setTitle("포함할 번호 선택");
+            Log.e("REQUEST_CODE_DIRECT","===================" + REQUEST_CODE_DIRECT);
+        } else if (REQUEST_CODE_DIRECT == 200) {
+            actionBar.setTitle("제외할 번호 선택");
+            Log.e("REQUEST_CODE_DIRECT","===================" + REQUEST_CODE_DIRECT);
+        }
 
         setContentView(R.layout.activity_direct_num_select);
 
         btnSelect = (Button) findViewById(R.id.btnSelect_direct);
-
         linearLayout = (LinearLayout) findViewById(R.id.direct_ll);
+        ll_select_result = (LinearLayout) findViewById(R.id.ll_select_result);
+        ll_select_result.setBackgroundColor(Color.YELLOW);
+        ll_select_result.setGravity(Gravity.CENTER_HORIZONTAL);
+        textView5 = (TextView) findViewById(R.id.textView5);
+
+        if(REQUEST_CODE_DIRECT == 300){
+            btnSelect.setText("번호저장!");
+            textView5.setText("  번호 6개를 선택해주세요!");
+            switchLimit = 6;
+        } else if (REQUEST_CODE_DIRECT == 100 || REQUEST_CODE_DIRECT == 200) {
+            btnSelect.setText("선택완료");
+            textView5.setText("  포함할 번호를 선택하세요. (최대 5개)");
+            ll_select_result.setVisibility(View.GONE);
+            switchLimit = 5;
+        }
 
         viewInit();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home :
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     public void viewInit(){
@@ -101,24 +143,41 @@ public class DirectNumSelectActivity extends AppCompatActivity {
 
                             switch (((TextView)v).getPaintFlags()){
                                 case 0 :
-                                    if(numSelectCounter < 5) {
+                                    if(numSelectCounter < switchLimit) {
                                         if(v.getId() < 11){
                                             v.setBackgroundResource(R.mipmap.ball_one);
+                                            v.setTag(R.mipmap.ball_one);
                                         } else if(v.getId() < 21) {
                                             v.setBackgroundResource(R.mipmap.ball_two);
+                                            v.setTag(R.mipmap.ball_two);
                                         } else if (v.getId() < 31) {
                                             v.setBackgroundResource(R.mipmap.ball_three);
+                                            v.setTag(R.mipmap.ball_three);
                                         } else if (v.getId() < 41) {
                                             v.setBackgroundResource(R.mipmap.ball_four);
+                                            v.setTag(R.mipmap.ball_four);
                                         } else {
                                             v.setBackgroundResource(R.mipmap.ball_five);
+                                            v.setTag(R.mipmap.ball_five);
                                         }
                                         ((TextView)v).setPaintFlags(1);
                                         numSelectCounter = numSelectCounter + 1;
                                         selectedNumberList.add(v.getId());
 
+
+                                        TextView selectedTV = new TextView(DirectNumSelectActivity.this);
+                                        selectedTV.setId(v.getId());
+                                        selectedTV.setText(((TextView) v).getText().toString());
+                                        selectedTV.setGravity(Gravity.CENTER);
+                                        selectedTV.setTextSize(20);
+                                        selectedTV.setTextColor(Color.WHITE);
+                                        selectedTV.setBackgroundResource((Integer) v.getTag());
+                                        selectedTV.setTypeface(Typeface.DEFAULT_BOLD);
+
+                                        ll_select_result.addView(selectedTV);
+
                                     }else {
-                                        Toast.makeText(DirectNumSelectActivity.this, "5개까지만 선택 가능해요!", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(DirectNumSelectActivity.this, switchLimit + "개까지만 선택 가능해요!", Toast.LENGTH_SHORT).show();
                                     }
                                     break;
 
@@ -127,6 +186,9 @@ public class DirectNumSelectActivity extends AppCompatActivity {
                                     ((TextView)v).setPaintFlags(0);
                                     numSelectCounter = numSelectCounter - 1;
                                     selectedNumberList.remove((Object)v.getId()); //오브젝트 타입으로 바꿔주어야 인덱스로 삭제하는게 아닌 값으로 삭제를 할 수 있다.
+
+                                    ll_select_result.removeView(findViewById(v.getId()));
+
                                     break;
                             }
                     }
@@ -152,21 +214,25 @@ public class DirectNumSelectActivity extends AppCompatActivity {
         btnSelect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(numSelectCounter == 0){
-                    Toast.makeText(DirectNumSelectActivity.this, "번호를 1개 이상 선택해 주십쇼!", Toast.LENGTH_SHORT).show();
-                } else {
-                    Intent returnIntent = new Intent(DirectNumSelectActivity.this, AutoGenActivity.class);
-                    returnIntent.putIntegerArrayListExtra("result", selectedNumberList);
-                    setResult(RESULT_OK, returnIntent);
-                    Log.e("과연 어떤값이?","=================" + selectedNumberList);
-                    finish();
+
+                if(REQUEST_CODE_DIRECT == 100 || REQUEST_CODE_DIRECT == 200){
+                    if(numSelectCounter == 0){
+                        Toast.makeText(DirectNumSelectActivity.this, "번호를 1개 이상 선택해 주십쇼!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Intent returnIntent = new Intent(DirectNumSelectActivity.this, AutoGenActivity.class);
+                        returnIntent.putIntegerArrayListExtra("result", selectedNumberList);
+                        setResult(RESULT_OK, returnIntent);
+                        Log.e("과연 어떤값이?","=================" + selectedNumberList);
+                        finish();
+                    }
+                } else if (REQUEST_CODE_DIRECT == 300) {
+                    if(numSelectCounter < 6){
+                        Toast.makeText(DirectNumSelectActivity.this, "6개 다 채웠는감??", Toast.LENGTH_SHORT).show();
+                    } else {
+                        finish();
+                    }
                 }
             }
         });
     }
-
-
-
-
-
 }

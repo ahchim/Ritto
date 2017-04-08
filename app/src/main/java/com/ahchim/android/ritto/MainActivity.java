@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity
 
     public void genNumberMenu(View v) {
         PopupMenu popup = new PopupMenu(this, v);
-        MenuInflater inflater = popup.getMenuInflater();
+        final MenuInflater inflater = popup.getMenuInflater();
         inflater.inflate(R.menu.generate_number, popup.getMenu());
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
@@ -79,7 +79,8 @@ public class MainActivity extends AppCompatActivity
                         startActivity(intent);
                         break;
                     case R.id.action_input_number :
-                        intent = new Intent(MainActivity.this, DirectGenActivity.class);
+                        intent = new Intent(MainActivity.this, DirectNumSelectActivity.class);
+                        intent.putExtra("REQUEST_CODE", 300);
                         startActivity(intent);
                         break;
                 }
