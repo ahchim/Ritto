@@ -13,27 +13,27 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import com.ahchim.android.ritto.model.SavedNumber;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+import io.realm.Realm;
+
 import static android.text.InputType.TYPE_CLASS_NUMBER;
 
-public class AutoGenActivity extends AppCompatActivity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
+public class AutoGenActivity extends AppCompatActivity implements View.OnClickListener{
 
     Button btnSelect1, btnSelect2, btnGen, btnSave;
     public static int REQUEST_CODE_1 = 100;
@@ -44,6 +44,7 @@ public class AutoGenActivity extends AppCompatActivity implements View.OnClickLi
     ArrayList<Integer> generatedNumber;
 
     ArrayList<ArrayList<Integer>> allGeneratedNumber = new ArrayList<>();
+    ArrayList<ArrayList<Integer>> goToSaveNumber = new ArrayList<>();
 
     Ascending ascending;
 
@@ -52,6 +53,8 @@ public class AutoGenActivity extends AppCompatActivity implements View.OnClickLi
 
     ListView listView;
     EditText howManyNum;
+
+    Realm realm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +90,8 @@ public class AutoGenActivity extends AppCompatActivity implements View.OnClickLi
 
         ascending = new Ascending();
 
+        realm = Realm.getDefaultInstance();
+
     }
 
     @Override
@@ -105,8 +110,7 @@ public class AutoGenActivity extends AppCompatActivity implements View.OnClickLi
                 break;
 
             case R.id.btnSave :
-                int a = listView.getCheckedItemPosition();
-                Log.e("a","================" + a);
+                saveGenNum(goToSaveNumber);
                 break;
 
             case R.id.btnGen1 :
@@ -124,7 +128,6 @@ public class AutoGenActivity extends AppCompatActivity implements View.OnClickLi
                     final ListViewAdapter adapter = new ListViewAdapter(this, generatedNumber, R.layout.list_view_item_auto_gen, howMany , allGeneratedNumber);
                     adapter.notifyDataSetChanged();
                     listView.setAdapter(adapter);
-
 
                     listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
                         @Override
@@ -144,13 +147,19 @@ public class AutoGenActivity extends AppCompatActivity implements View.OnClickLi
                     listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            Log.e("클릭리스너","들어오니? ===================");
+                            //Log.e("클릭리스너","들어오니? ===================");
                             CheckBox check = (CheckBox) view.findViewById(position);
                             if(check.getVisibility() == View.VISIBLE){
                                 if (check.isChecked()){
                                     check.setChecked(false);
+                                    goToSaveNumber.remove(allGeneratedNumber.get(position));
+                                    Log.e("position","======================" + position);
+                                    Log.e("goToSaveNumber","======================" + goToSaveNumber);
                                 } else {
                                     check.setChecked(true);
+                                    goToSaveNumber.add(allGeneratedNumber.get(position));
+                                    Log.e("position","======================" + position);
+                                    Log.e("goToSaveNumber","======================" + goToSaveNumber);
                                 }
                             }
                         }
@@ -245,6 +254,10 @@ public class AutoGenActivity extends AppCompatActivity implements View.OnClickLi
 
     public void generateRandomNumber(ArrayList<Integer> selectedNumber, ArrayList<Integer> exceptNumber, int howMany){
 
+        if(allGeneratedNumber != null){
+            allGeneratedNumber.clear();
+        }
+
         for (int p = 0; p <= howMany; p++){
 
             ArrayList<Integer> ranNumber = new ArrayList<>();
@@ -288,12 +301,6 @@ public class AutoGenActivity extends AppCompatActivity implements View.OnClickLi
 
         }
     }
-
-    @Override
-    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
-    }
-
 
     //오름차순
     class Ascending implements Comparator<Integer>{
@@ -378,7 +385,33 @@ public class AutoGenActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-    public void saveGenNum(){
+    //만든번호 저장
+    public void saveGenNum(ArrayList<ArrayList<Integer>> arrayList){
+
+        realm.beginTransaction();
+        SavedNumber savedNumber = realm.createObject(SavedNumber.class);
+
+        for(ArrayList<Integer> item : arrayList){
+            Log.e("item","================" + item);
+
+            savedNumber.setNum1(item.get(0));
+            savedNumber.setNum2(item.get(1));
+            savedNumber.setNum3(item.get(2));
+            savedNumber.setNum4(item.get(3));
+            savedNumber.setNum5(item.get(4));
+            savedNumber.setNum6(item.get(5));
+
+            Log.e("getNumber","================" + savedNumber.getNum1());
+            Log.e("getNumber","================" + savedNumber.getNum2());
+            Log.e("getNumber","================" + savedNumber.getNum3());
+            Log.e("getNumber","================" + savedNumber.getNum4());
+            Log.e("getNumber","================" + savedNumber.getNum5());
+            Log.e("getNumber","================" + savedNumber.getNum6());
+
+        }
+
+        realm.commitTransaction();
+        realm.close();
 
     }
 
