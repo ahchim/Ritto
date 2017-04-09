@@ -13,10 +13,14 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -29,9 +33,9 @@ import java.util.Comparator;
 
 import static android.text.InputType.TYPE_CLASS_NUMBER;
 
-public class AutoGenActivity extends AppCompatActivity implements View.OnClickListener {
+public class AutoGenActivity extends AppCompatActivity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
 
-    Button btnSelect1, btnSelect2, btnGen;
+    Button btnSelect1, btnSelect2, btnGen, btnSave;
     public static int REQUEST_CODE_1 = 100;
     public static int REQUEST_CODE_2 = 200;
 
@@ -66,13 +70,16 @@ public class AutoGenActivity extends AppCompatActivity implements View.OnClickLi
 
         listView = (ListView) findViewById(R.id.listView);
 
+
         btnSelect1 = (Button) findViewById(R.id.btnSelect);
         btnSelect2 = (Button) findViewById(R.id.btnSelect2);
         btnGen = (Button) findViewById(R.id.btnGen1);
+        btnSave = (Button) findViewById(R.id.btnSave);
 
         btnSelect1.setOnClickListener(this);
         btnSelect2.setOnClickListener(this);
         btnGen.setOnClickListener(this);
+        btnSave.setOnClickListener(this);
 
         howManyNum = (EditText) findViewById(R.id.howManyNum);
         howManyNum.setInputType(TYPE_CLASS_NUMBER);
@@ -96,6 +103,12 @@ public class AutoGenActivity extends AppCompatActivity implements View.OnClickLi
                 intent.putExtra("REQUEST_CODE", REQUEST_CODE_2);
                 startActivityForResult(intent, REQUEST_CODE_2);
                 break;
+
+            case R.id.btnSave :
+                int a = listView.getCheckedItemPosition();
+                Log.e("a","================" + a);
+                break;
+
             case R.id.btnGen1 :
                 int howMany = 0;
 
@@ -108,9 +121,41 @@ public class AutoGenActivity extends AppCompatActivity implements View.OnClickLi
 
                 if( howMany > 0 && howMany < 6){
                     generateRandomNumber(selectedNumber, exceptNumber, howMany-1);
-                    ListViewAdapter adapter = new ListViewAdapter(this, generatedNumber, R.layout.list_view_item_auto_gen, howMany , allGeneratedNumber);
+                    final ListViewAdapter adapter = new ListViewAdapter(this, generatedNumber, R.layout.list_view_item_auto_gen, howMany , allGeneratedNumber);
                     adapter.notifyDataSetChanged();
                     listView.setAdapter(adapter);
+
+
+                    listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                        @Override
+                        public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                            for(int i=listView.getAdapter().getCount()-1; i>=0; i--){
+                                Log.e("ListView","===========================" + listView);
+                                CheckBox check = (CheckBox) listView.findViewById(i);
+                                check.setVisibility(View.VISIBLE);
+                                check.setFocusable(false);
+                                check.setClickable(false);
+                                check.setChecked(((ListView)parent).isItemChecked(position));
+                            }
+                            return false;
+                        }
+                    });
+
+                    listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            Log.e("클릭리스너","들어오니? ===================");
+                            CheckBox check = (CheckBox) view.findViewById(position);
+                            if(check.getVisibility() == View.VISIBLE){
+                                if (check.isChecked()){
+                                    check.setChecked(false);
+                                } else {
+                                    check.setChecked(true);
+                                }
+                            }
+                        }
+                    });
+
                 } else {
                     Toast.makeText(this, "0 이상 5이하의 정수를 입력하세요!", Toast.LENGTH_SHORT).show();
                 }
@@ -244,6 +289,12 @@ public class AutoGenActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+    }
+
+
     //오름차순
     class Ascending implements Comparator<Integer>{
         @Override
@@ -302,6 +353,10 @@ public class AutoGenActivity extends AppCompatActivity implements View.OnClickLi
                 convertView = inflater.inflate(layout, parent, false);
             }
 
+            CheckBox checkBox = (CheckBox) convertView.findViewById(R.id.checkBox);
+            //checkBox.setOnCheckedChangeListener(AutoGenActivity.this);
+            checkBox.setId(position);
+
             TextView num1 = (TextView) convertView.findViewById(R.id.num1);
             TextView num2 = (TextView) convertView.findViewById(R.id.num2);
             TextView num3 = (TextView) convertView.findViewById(R.id.num3);
@@ -319,10 +374,15 @@ public class AutoGenActivity extends AppCompatActivity implements View.OnClickLi
             num5.setText(allGeneratedNum.get(position).get(4) + "");
             num6.setText(allGeneratedNum.get(position).get(5) + "");
 
-
             return convertView;
         }
     }
+
+    public void saveGenNum(){
+
+    }
+
+
 
     //제네레이트 된 번호들을 모은다. 최대 5개    -->  개 뻘짓의 산물
 //    public class GeneratedItemNumber {
