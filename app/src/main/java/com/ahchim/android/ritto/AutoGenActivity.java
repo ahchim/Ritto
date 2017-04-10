@@ -25,9 +25,14 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.ahchim.android.ritto.model.SavedNumber;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
+import java.util.Locale;
 
 import io.realm.Realm;
 
@@ -111,9 +116,11 @@ public class AutoGenActivity extends AppCompatActivity implements View.OnClickLi
 
             case R.id.btnSave :
                 saveGenNum(goToSaveNumber);
+                Toast.makeText(this, "선택한 번호가 저장되었습니다!", Toast.LENGTH_SHORT).show();
                 break;
 
             case R.id.btnGen1 :
+                goToSaveNumber.clear();
                 int howMany = 0;
 
                 //문자 입력 예방 예외처리
@@ -388,12 +395,20 @@ public class AutoGenActivity extends AppCompatActivity implements View.OnClickLi
     //만든번호 저장
     public void saveGenNum(ArrayList<ArrayList<Integer>> arrayList){
 
+
+
+
         realm.beginTransaction();
-        SavedNumber savedNumber = realm.createObject(SavedNumber.class);
 
         for(ArrayList<Integer> item : arrayList){
             Log.e("item","================" + item);
 
+            SavedNumber savedNumber = realm.createObject(SavedNumber.class);
+
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.KOREA);
+            String currentDateTimeString = dateFormat.format(new Date());
+
+            savedNumber.setDate(currentDateTimeString);
             savedNumber.setNum1(item.get(0));
             savedNumber.setNum2(item.get(1));
             savedNumber.setNum3(item.get(2));
@@ -401,6 +416,7 @@ public class AutoGenActivity extends AppCompatActivity implements View.OnClickLi
             savedNumber.setNum5(item.get(4));
             savedNumber.setNum6(item.get(5));
 
+            Log.e("현재날짜", "======================" + currentDateTimeString);
             Log.e("getNumber","================" + savedNumber.getNum1());
             Log.e("getNumber","================" + savedNumber.getNum2());
             Log.e("getNumber","================" + savedNumber.getNum3());

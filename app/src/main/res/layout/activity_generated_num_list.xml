@@ -6,4 +6,14 @@
     android:layout_height="match_parent"
     tools:context="com.ahchim.android.ritto.GeneratedNumListActivity">
 
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler1"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:listitem="@layout/list_view_item_auto_gen" />
+
 </android.support.constraint.ConstraintLayout>
