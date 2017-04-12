@@ -7,6 +7,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Gravity;
+import android.widget.ListView;
 
 import com.ahchim.android.ritto.model.SavedNumber;
 
@@ -18,7 +19,7 @@ import io.realm.RealmResults;
 
 public class GeneratedNumListActivity extends AppCompatActivity {
 
-    RecyclerView recyclerView;
+    ListView listView;
     Realm realm;
     RealmResults<SavedNumber> results;
 
@@ -33,19 +34,14 @@ public class GeneratedNumListActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_generated_num_list);
 
-        recyclerView = (RecyclerView) findViewById(R.id.recycler1);
-
         realm = Realm.getDefaultInstance();
         importSaveData();
 
-        GenNumList_Adapter adapter = new GenNumList_Adapter(this, results);
-
-        LinearLayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-
-        recyclerView.setLayoutManager(manager);
-        recyclerView.setAdapter(adapter);
-
-
+        listView = (ListView) findViewById(R.id.list1);
+        GenNumList_Adapter adapter = new GenNumList_Adapter(this, results, R.layout.divider_layout, R.layout.list_view_item_auto_gen);
+        adapter.notifyDataSetChanged();
+        listView.setAdapter(adapter);
+        
     }
 
 
@@ -55,12 +51,6 @@ public class GeneratedNumListActivity extends AppCompatActivity {
             public void execute(Realm realm) {
                 results = realm.where(SavedNumber.class).findAll();
                 Log.e("렘 검색결과","===========================" + results);
-
-//                for(SavedNumber item : results){
-//                    searchResult.add(item);
-//                }
-//                Log.e("데이터 들어감?","===========================" + searchResult);
-
             }
         });
     }

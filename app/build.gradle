@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'realm-android'
 
 android {
+
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
     defaultConfig {
@@ -28,6 +29,7 @@ dependencies {
     })
     compile files('libs/libDaumMapAndroid.jar')
     compile files('libs/libDaumMapEngineApi.jar')
+    compile fileTree(dir: 'libs', include: '*.jar')
     compile 'com.android.support:appcompat-v7:25.2.0'
     compile 'com.android.support:design:25.2.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'

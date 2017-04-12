@@ -65,6 +65,12 @@ public class MainActivity extends AppCompatActivity
         startActivity(intent);
     }
 
+    public void moveToNation() {
+        Intent intent = new Intent(MainActivity.this, NationStoreActivity.class);
+        startActivity(intent);
+    }
+
+
     public void genNumberMenu(View v) {
         PopupMenu popup = new PopupMenu(this, v);
         final MenuInflater inflater = popup.getMenuInflater();
@@ -133,6 +139,7 @@ public class MainActivity extends AppCompatActivity
                         moveToMap(v);
                         break;
                     case R.id.action_store_nationwide :
+                        moveToNation();
                         break;
                 }
                 return false;

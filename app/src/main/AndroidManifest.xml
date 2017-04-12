@@ -45,21 +45,23 @@
         <activity
             android:name=".daummap.DaumMapActivity"
             android:configChanges="keyboardHidden|orientation|screenSize">
-
-            <!--
             <intent-filter>
                 <action android:name="android.location.PROVIDERS_CHANGED" />
             </intent-filter>
-            -->
         </activity>
         <activity android:name=".daummap.search.LocationDemoActivity" />
         <activity
             android:name=".AutoGenActivity"
             android:windowSoftInputMode="stateAlwaysHidden|adjustNothing" />
-        <activity android:name=".GeneratedNumListActivity" />
+        <activity
+            android:name=".GeneratedNumListActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity android:name=".PastWinNumActivity" />
         <activity android:name=".PurchasedNumActivity" />
-        <activity android:name=".DirectNumSelectActivity"/>
+        <activity
+            android:name=".DirectNumSelectActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize" />
+        <activity android:name=".NationStoreActivity"></activity>
     </application>
 
 </manifest>

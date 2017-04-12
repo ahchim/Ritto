@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    android:id="@+id/ll_container_divide"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/tv_divider"
@@ -11,24 +12,26 @@
         android:background="#5D5D5D"
         android:paddingBottom="3dp"
         android:paddingTop="3dp"
+        android:paddingLeft="10dp"
         android:text="  Date : "
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textColor="#ffffff" />
 
     <LinearLayout
+        android:id="@+id/ll_container_divide_inner"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center_horizontal"
-        android:padding="7dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:padding="7dp">
 
         <CheckBox
             android:id="@+id/check"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:layout_marginRight="10dp"
             android:layout_gravity="center_vertical"
-            android:visibility="gone"/>
+            android:layout_marginRight="10dp"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/num1_adapter"

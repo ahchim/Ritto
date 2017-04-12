@@ -78,7 +78,6 @@ public class AutoGenActivity extends AppCompatActivity implements View.OnClickLi
 
         listView = (ListView) findViewById(R.id.listView);
 
-
         btnSelect1 = (Button) findViewById(R.id.btnSelect);
         btnSelect2 = (Button) findViewById(R.id.btnSelect2);
         btnGen = (Button) findViewById(R.id.btnGen1);
@@ -132,7 +131,7 @@ public class AutoGenActivity extends AppCompatActivity implements View.OnClickLi
 
                 if( howMany > 0 && howMany < 6){
                     generateRandomNumber(selectedNumber, exceptNumber, howMany-1);
-                    final ListViewAdapter adapter = new ListViewAdapter(this, generatedNumber, R.layout.list_view_item_auto_gen, howMany , allGeneratedNumber);
+                    final ListViewAdapter adapter = new ListViewAdapter(this, R.layout.list_view_item_auto_gen, howMany , allGeneratedNumber);
                     adapter.notifyDataSetChanged();
                     listView.setAdapter(adapter);
 
@@ -332,12 +331,10 @@ public class AutoGenActivity extends AppCompatActivity implements View.OnClickLi
         LayoutInflater inflater;
         int layout;
         int howMany;
-        ArrayList<Integer> arrayList1 = new ArrayList<>();
         ArrayList<ArrayList<Integer>> allGeneratedNum = new ArrayList<>();
 
-        public ListViewAdapter(Context context, ArrayList<Integer> arrayList, int layout, int howMany, ArrayList<ArrayList<Integer>> allGeneratedNum){
+        public ListViewAdapter(Context context, int layout, int howMany, ArrayList<ArrayList<Integer>> allGeneratedNum){
             this.context = context;
-            this.arrayList1 = arrayList;
             this.layout = layout;
             this.howMany = howMany;
             this.allGeneratedNum = allGeneratedNum;
@@ -378,8 +375,6 @@ public class AutoGenActivity extends AppCompatActivity implements View.OnClickLi
             TextView num5 = (TextView) convertView.findViewById(R.id.num5);
             TextView num6 = (TextView) convertView.findViewById(R.id.num6);
 
-            Log.e("arrayList1","===========================" + arrayList1);
-
             //allGeneratedNum.get(position).get(0) -> 이게 중요해.........
             num1.setText(allGeneratedNum.get(position).get(0) + "");
             num2.setText(allGeneratedNum.get(position).get(1) + "");
@@ -394,9 +389,6 @@ public class AutoGenActivity extends AppCompatActivity implements View.OnClickLi
 
     //만든번호 저장
     public void saveGenNum(ArrayList<ArrayList<Integer>> arrayList){
-
-
-
 
         realm.beginTransaction();
 
@@ -423,15 +415,12 @@ public class AutoGenActivity extends AppCompatActivity implements View.OnClickLi
             Log.e("getNumber","================" + savedNumber.getNum4());
             Log.e("getNumber","================" + savedNumber.getNum5());
             Log.e("getNumber","================" + savedNumber.getNum6());
-
         }
 
         realm.commitTransaction();
         realm.close();
 
     }
-
-
 
     //제네레이트 된 번호들을 모은다. 최대 5개    -->  개 뻘짓의 산물
 //    public class GeneratedItemNumber {

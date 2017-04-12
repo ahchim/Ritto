@@ -1,165 +1,165 @@
 package com.ahchim.android.ritto;
 
+
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.widget.BaseAdapter;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.ahchim.android.ritto.model.SavedNumber;
-
 import io.realm.RealmResults;
 
 /**
  * Created by Gold on 2017. 4. 10..
  */
 
-public class GenNumList_Adapter extends RecyclerView.Adapter<GenNumList_Adapter.ViewHolder> {
+public class GenNumList_Adapter extends BaseAdapter{
 
-    @Override
-    public void setHasStableIds(boolean hasStableIds) {
-        super.setHasStableIds(hasStableIds);
-    }
+    public static final int VIEW_TYPE_DATE = 0;
+    public static final int VIEW_TYPE_NUM = 1;
+    public static final int TYPE_MAX_COUNT = VIEW_TYPE_DATE + 1;
 
-    private Context mContext;
+
+
+    Context mContext;
     RealmResults<SavedNumber> results;
+    LayoutInflater inflater;
+    int divide_layout;
+    int num_layout;
+    String date = "";
 
-    public static String date = "";
-    public static String importDate = null;
-
-    public static boolean isDateInflated = false;
-
-    public static final int VIEW_TYPE_DATE = 3;
-    public static final int VIEW_TYPE_NUM = 2;
-
-    public GenNumList_Adapter(Context context, RealmResults<SavedNumber> realmResults){
+    public GenNumList_Adapter(Context context, RealmResults<SavedNumber> realmResults, int layout1, int layout2){
         mContext = context;
         results = realmResults;
-//        Log.e("results","========================" + results);
-//        Log.e("results","의 사이즈" + results.size());
+        divide_layout = layout1;
+        num_layout = layout2;
+        inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     @Override
-    public int getItemViewType(int position) {
-
-        importDate = results.get(position).getDate();
-        Log.e("importDate","========================" + importDate);
-
-        if(date.equals(importDate)){
-            Log.e("date.equals(importDate)","============="+date.equals(importDate));
-//            Log.e("getItemViewType","데이트 같을때" + date);
-//            Log.e("date","========================" + date);
-//            Log.e("results의 date","========================" + results.get(position).getDate());
-
-            isDateInflated = true;
-            return VIEW_TYPE_NUM;
-
-        } else if (date.equals(importDate) == false){
-            Log.e("date.equals(importDate)","============="+date.equals(importDate));
-//            Log.e("getItemViewType","데이트 다를때" + date);
-//            Log.e("date","========================" + date);
-//            Log.e("results의 date","========================" + results.get(position).getDate());
-            //date = results.get(position).getDate();
-            //isDateInflated = false;
-            return VIEW_TYPE_DATE;
-        }
-
-        //return super.getItemViewType(position);
-        return position;
-    }
-
-
-    @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
-        switch (viewType){
-            case VIEW_TYPE_DATE :
-                //Log.e("VIEW_TYPE","======================" + VIEW_TYPE_DATE);
-                View viewDate = View.inflate(mContext, R.layout.divider_layout, null);
-                ViewHolder viewHolderDate = new ViewHolder(VIEW_TYPE_DATE, viewDate);
-                return viewHolderDate;
-
-            case VIEW_TYPE_NUM :
-                //Log.e("VIEW_TYPE","======================" + VIEW_TYPE_DATE);
-                View viewNum = View.inflate(mContext, R.layout.list_view_item_auto_gen, null);
-                ViewHolder viewHolderNum = new ViewHolder(viewNum);
-                return viewHolderNum;
-        }
-
-        return null;
-    }
-
-    @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        if (date.equals(importDate) == false){
-
-            //Log.e("isDateInflated","======================" + isDateInflated);
-
-            holder.divider.setText(results.get(position).getDate());
-            holder.num1.setText(results.get(position).getNum1() + "");
-            holder.num2.setText(results.get(position).getNum2() + "");
-            holder.num3.setText(results.get(position).getNum3() + "");
-            holder.num4.setText(results.get(position).getNum4() + "");
-            holder.num5.setText(results.get(position).getNum5() + "");
-            holder.num6.setText(results.get(position).getNum6() + "");
-//            Log.e("true되었니?","======================" + isDateInflated);
-//            Log.e("divider","======================" + holder.divider.getText());
-            date = importDate;
-            //Log.e("date 바꿔줬다!!","======================" + date);
-
-        } else if (date.equals(importDate) == true) {
-
-            //Log.e("isDateInflated","======================" + isDateInflated);
-
-            holder.num1.setText(results.get(position).getNum1() + "");
-            holder.num2.setText(results.get(position).getNum2() + "");
-            holder.num3.setText(results.get(position).getNum3() + "");
-            holder.num4.setText(results.get(position).getNum4() + "");
-            holder.num5.setText(results.get(position).getNum5() + "");
-            holder.num6.setText(results.get(position).getNum6() + "");
-        }
-    }
-
-    @Override
-    public int getItemCount() {
+    public int getCount() {
         return results.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+//    @Override
+//    public int getViewTypeCount() {
+//        //return super.getViewTypeCount();
+//        return  getCount();
+//    }
 
-        public TextView num1, num2, num3, num4, num5, num6;
-        public LinearLayout ll_container;
-        public TextView divider;
+//    @Override
+//    public int getItemViewType(int position) {
+//        //return super.getItemViewType(position);
+////        if(date.equals(results.get(position).getDate())){
+////            Log.e("type : num / getDate","=====================" + results.get(position).getDate());
+////            return VIEW_TYPE_NUM;
+////        } else {
+////            Log.e("type : date / getDate","=====================" + results.get(position).getDate());
+////            return VIEW_TYPE_DATE;
+////        }
+//        return position;
+//    }
 
-        public ViewHolder(View itemView) {
-            super(itemView);
-
-            //Log.e("그냥 ViewHolder","======================" + isDateInflated);
-
-            ll_container = (LinearLayout) itemView.findViewById(R.id.ll_container_autogen);
-            num1 = (TextView) itemView.findViewById(R.id.num1);
-            num2 = (TextView) itemView.findViewById(R.id.num2);
-            num3 = (TextView) itemView.findViewById(R.id.num3);
-            num4 = (TextView) itemView.findViewById(R.id.num4);
-            num5 = (TextView) itemView.findViewById(R.id.num5);
-            num6 = (TextView) itemView.findViewById(R.id.num6);
-        }
-
-        public ViewHolder(int TYPE_DATE, View itemView){
-            super(itemView);
-
-            //Log.e("오버로딩 ViewHolder","======================" + isDateInflated);
-
-            divider = (TextView) itemView.findViewById(R.id.tv_divider);
-            num1 = (TextView) itemView.findViewById(R.id.num1_adapter);
-            num2 = (TextView) itemView.findViewById(R.id.num2_adapter);
-            num3 = (TextView) itemView.findViewById(R.id.num3_adapter);
-            num4 = (TextView) itemView.findViewById(R.id.num4_adapter);
-            num5 = (TextView) itemView.findViewById(R.id.num5_adapter);
-            num6 = (TextView) itemView.findViewById(R.id.num6_adapter);
-        }
+    @Override
+    public Object getItem(int position) {
+        return results.get(position);
     }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+//        switch (getItemViewType(position)){
+//            case VIEW_TYPE_DATE :
+//                return getDateView(position, convertView, parent);
+//            case VIEW_TYPE_NUM :
+//                return getNumView(position, convertView, parent);
+//        }
+
+        return getDateView(position, convertView, parent);
+    }
+
+    private View getDateView(int position, View convertView, ViewGroup parent) {
+
+        Viewholder viewholder = null;
+
+        if(convertView == null){
+            convertView = inflater.inflate(divide_layout, parent, false);
+            viewholder = new Viewholder();
+            viewholder.textView = (TextView) convertView.findViewWithTag("visible");
+            convertView.setTag(viewholder);
+        } else {
+            viewholder = (Viewholder) convertView.getTag();
+        }
+
+        CheckBox checkBox = (CheckBox) convertView.findViewById(R.id.check);
+        TextView divider = (TextView) convertView.findViewById(R.id.tv_divider);
+        TextView num1 = (TextView) convertView.findViewById(R.id.num1_adapter);
+        TextView num2 = (TextView) convertView.findViewById(R.id.num2_adapter);
+        TextView num3 = (TextView) convertView.findViewById(R.id.num3_adapter);
+        TextView num4 = (TextView) convertView.findViewById(R.id.num4_adapter);
+        TextView num5 = (TextView) convertView.findViewById(R.id.num5_adapter);
+        TextView num6 = (TextView) convertView.findViewById(R.id.num6_adapter);
+
+        int visibility = date.equals(results.get(position).getDate()) ? View.GONE : View.VISIBLE ;
+        Log.e("visibility","=======================" + visibility);
+        checkBox.setClickable(false);
+        checkBox.setVisibility(View.GONE);
+
+        divider.setText(results.get(position).getDate());
+        divider.setVisibility(visibility);
+        if(visibility == View.VISIBLE){
+            divider.setTag("visible");
+        }
+
+        num1.setText(results.get(position).getNum1() + "");
+        num2.setText(results.get(position).getNum2() + "");
+        num3.setText(results.get(position).getNum3() + "");
+        num4.setText(results.get(position).getNum4() + "");
+        num5.setText(results.get(position).getNum5() + "");
+        num6.setText(results.get(position).getNum6() + "");
+        date = results.get(position).getDate();
+
+        return convertView;
+    }
+
+
+    public static class Viewholder {
+        public TextView textView;
+    }
+
+//    private View getNumView (int position, View convertView, ViewGroup parent) {
+//
+//        if(convertView == null){
+//            convertView = inflater.inflate(num_layout, parent, false);
+//        }
+//
+//        CheckBox checkBox = (CheckBox) convertView.findViewById(R.id.checkBox);
+//        TextView num1 = (TextView) convertView.findViewById(R.id.num1);
+//        TextView num2 = (TextView) convertView.findViewById(R.id.num2);
+//        TextView num3 = (TextView) convertView.findViewById(R.id.num3);
+//        TextView num4 = (TextView) convertView.findViewById(R.id.num4);
+//        TextView num5 = (TextView) convertView.findViewById(R.id.num5);
+//        TextView num6 = (TextView) convertView.findViewById(R.id.num6);
+//
+//        checkBox.setClickable(false);
+//        checkBox.setVisibility(View.GONE);
+//        num1.setText(results.get(position).getNum1() + "");
+//        num2.setText(results.get(position).getNum2() + "");
+//        num3.setText(results.get(position).getNum3() + "");
+//        num4.setText(results.get(position).getNum4() + "");
+//        num5.setText(results.get(position).getNum5() + "");
+//        num6.setText(results.get(position).getNum6() + "");
+//
+//        return convertView;
+//    }
+
+
 }
