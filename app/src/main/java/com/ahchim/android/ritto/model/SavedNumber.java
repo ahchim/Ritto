@@ -1,6 +1,8 @@
 package com.ahchim.android.ritto.model;
 
 
+import android.view.View;
+
 import java.util.ArrayList;
 
 import io.realm.RealmList;
@@ -14,6 +16,14 @@ import io.realm.annotations.PrimaryKey;
 
 public class SavedNumber extends RealmObject {
 
+    @Ignore
+    public static final int HIDE = View.GONE;
+    @Ignore
+    public static final int NONE = -100;
+    @Ignore
+    public static final int SHOW = View.VISIBLE;
+
+    private int show = NONE;
 
     private String date = "";
 
@@ -23,6 +33,14 @@ public class SavedNumber extends RealmObject {
     private int num4 = 0;
     private int num5 = 0;
     private int num6 = 0;
+
+    public int getShow() {
+        return show;
+    }
+
+    public void setShow(int show) {
+        this.show = show;
+    }
 
     public String getDate() {
         return date;

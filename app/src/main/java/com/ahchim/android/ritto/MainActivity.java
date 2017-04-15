@@ -20,7 +20,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.ahchim.android.ritto.daummap.DaumMapActivity;
-import com.ahchim.android.ritto.daummap.search.LocationDemoActivity;
 import com.ahchim.android.ritto.qrCodeReader.FullScannerFragmentActivity;
 
 public class MainActivity extends AppCompatActivity
@@ -44,7 +43,6 @@ public class MainActivity extends AppCompatActivity
 //                Snackbar.make(view, "QR코드 촬영 여기에", Snackbar.LENGTH_LONG)
 //                        .setAction("Action", null).show();
                 launchFullFragmentActivity(view);
-
             }
         });
 
@@ -58,10 +56,9 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
     }
 
-
     //네이버 지도 로딩
     public void moveToMap(View v){
-        Intent intent = new Intent(MainActivity.this, DaumMapActivity.class);
+        Intent intent = new Intent(MainActivity.this, MapsActivity.class);
         startActivity(intent);
     }
 
@@ -69,7 +66,6 @@ public class MainActivity extends AppCompatActivity
         Intent intent = new Intent(MainActivity.this, NationStoreActivity.class);
         startActivity(intent);
     }
-
 
     public void genNumberMenu(View v) {
         PopupMenu popup = new PopupMenu(this, v);

@@ -14,7 +14,17 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.ahchim.android.ritto.model.SavedNumber;
+import com.ahchim.android.ritto.util.Ascending;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Locale;
+
+import io.realm.Realm;
 
 public class DirectNumSelectActivity extends AppCompatActivity {
 
@@ -26,12 +36,14 @@ public class DirectNumSelectActivity extends AppCompatActivity {
     int a = 1;
     int numSelectCounter = 0;
 
-
     ArrayList<Integer> selectedNumberList = new ArrayList<>();
 
-    LinearLayout linearLayout, ll_select_result;
+    LinearLayout linearLayout, linearLayout1, ll_select_result;
     TextView lottoNum1, textView5;
     public static int REQUEST_CODE_DIRECT;
+
+    Realm realm;
+    Ascending ascending;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +89,9 @@ public class DirectNumSelectActivity extends AppCompatActivity {
         }
 
         viewInit();
+
+        realm = Realm.getDefaultInstance();
+        ascending = new Ascending();
     }
 
     @Override
@@ -92,7 +107,7 @@ public class DirectNumSelectActivity extends AppCompatActivity {
     public void viewInit(){
         for(int i=0; i<7; i++){
             View v = View.inflate(this, R.layout.num_select_list, null);
-            LinearLayout linearLayout1 = (LinearLayout) v.findViewById(R.id.ll_select);
+            linearLayout1 = (LinearLayout) v.findViewById(R.id.ll_select);
 
             switch (a){
                 case 1:
@@ -164,7 +179,6 @@ public class DirectNumSelectActivity extends AppCompatActivity {
                                         numSelectCounter = numSelectCounter + 1;
                                         selectedNumberList.add(v.getId());
 
-
                                         TextView selectedTV = new TextView(DirectNumSelectActivity.this);
                                         selectedTV.setId(v.getId());
                                         selectedTV.setText(((TextView) v).getText().toString());
@@ -229,7 +243,32 @@ public class DirectNumSelectActivity extends AppCompatActivity {
                     if(numSelectCounter < 6){
                         Toast.makeText(DirectNumSelectActivity.this, "6개 다 채웠는감??", Toast.LENGTH_SHORT).show();
                     } else {
-                        finish();
+                        realm.beginTransaction();
+
+                        SavedNumber savedNumber = realm.createObject(SavedNumber.class);
+                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.KOREA);
+                        String currentDateTimeString = simpleDateFormat.format(new Date());
+
+                        Collections.sort(selectedNumberList, ascending);
+                        savedNumber.setDate(currentDateTimeString);
+                        savedNumber.setNum1(selectedNumberList.get(0));
+                        savedNumber.setNum2(selectedNumberList.get(1));
+                        savedNumber.setNum3(selectedNumberList.get(2));
+                        savedNumber.setNum4(selectedNumberList.get(3));
+                        savedNumber.setNum5(selectedNumberList.get(4));
+                        savedNumber.setNum6(selectedNumberList.get(5));
+                        realm.commitTransaction();
+                        realm.close();
+                        Toast.makeText(DirectNumSelectActivity.this, "번호가 저장되었습니다!", Toast.LENGTH_SHORT).show();
+
+                        //저장후 뷰들의 초기화
+                        selectedNumberList = new ArrayList<>();
+                        linearLayout.removeAllViewsInLayout();
+
+                        viewInit();
+
+
+
                     }
                 }
             }

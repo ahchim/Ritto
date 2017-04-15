@@ -23,7 +23,7 @@ public class GeneratedNumListActivity extends AppCompatActivity {
     Realm realm;
     RealmResults<SavedNumber> results;
 
-    //ArrayList<SavedNumber> searchResult = new ArrayList<>();
+    ArrayList<SavedNumber> searchResult = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +38,7 @@ public class GeneratedNumListActivity extends AppCompatActivity {
         importSaveData();
 
         listView = (ListView) findViewById(R.id.list1);
-        GenNumList_Adapter adapter = new GenNumList_Adapter(this, results, R.layout.divider_layout, R.layout.list_view_item_auto_gen);
+        GenNumList_Adapter adapter = new GenNumList_Adapter(this, searchResult, R.layout.divider_layout, R.layout.list_view_item_auto_gen);
         adapter.notifyDataSetChanged();
         listView.setAdapter(adapter);
         
@@ -51,6 +51,11 @@ public class GeneratedNumListActivity extends AppCompatActivity {
             public void execute(Realm realm) {
                 results = realm.where(SavedNumber.class).findAll();
                 Log.e("렘 검색결과","===========================" + results);
+
+                for(int i=0; i<results.size(); i++){
+                    searchResult.add(results.get(i));
+                }
+
             }
         });
     }

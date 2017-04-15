@@ -31,5 +31,6 @@
     <string name="cancel_button">Cancel</string>
     <bool name="cameraPreviewShouldFillView">true</bool>
     <string name="str_done">완료</string>
+    <string name="title_activity_maps">Map</string>
 
 </resources>

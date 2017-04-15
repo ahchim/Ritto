@@ -20,20 +20,33 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+//    packagingOptions {
+//        //exclude 'lib/arm64-v8a/librealm-jni.so'
+//        exclude 'lib/armeabi-v7a/libDaumMapEngineApi.so'
+//    }
+
+//    defaultConfig{
+//        ndk{
+//            abiFilters "armeabi"
+//        }
+//    }
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile fileTree(dir: 'libs', include: ['*.jar'])
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+
     compile files('libs/libDaumMapAndroid.jar')
-    compile files('libs/libDaumMapEngineApi.jar')
-    compile fileTree(dir: 'libs', include: '*.jar')
     compile 'com.android.support:appcompat-v7:25.2.0'
     compile 'com.android.support:design:25.2.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'me.dm7.barcodescanner:zxing:1.9'
-    compile 'com.naver.maps.open:naver-map-api:2.1.2@aar'
+    compile 'com.google.android.gms:play-services-maps:10.2.1'
+    compile 'com.squareup.retrofit2:retrofit:2.2.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.2.0'
     testCompile 'junit:junit:4.12'
+    compile 'com.squareup.okhttp3:logging-interceptor:3.6.0'
 }

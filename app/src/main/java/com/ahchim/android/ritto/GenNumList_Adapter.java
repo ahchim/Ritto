@@ -11,6 +11,10 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.ahchim.android.ritto.model.SavedNumber;
+
+import java.util.ArrayList;
+
+import io.realm.Realm;
 import io.realm.RealmResults;
 
 /**
@@ -24,20 +28,23 @@ public class GenNumList_Adapter extends BaseAdapter{
     public static final int TYPE_MAX_COUNT = VIEW_TYPE_DATE + 1;
 
 
-
     Context mContext;
-    RealmResults<SavedNumber> results;
+    ArrayList<SavedNumber> results;
     LayoutInflater inflater;
     int divide_layout;
     int num_layout;
     String date = "";
 
-    public GenNumList_Adapter(Context context, RealmResults<SavedNumber> realmResults, int layout1, int layout2){
+    Realm realm;
+
+
+    public GenNumList_Adapter(Context context, ArrayList result, int layout1, int layout2){
         mContext = context;
-        results = realmResults;
+        this.results = result;
         divide_layout = layout1;
         num_layout = layout2;
         inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        realm = Realm.getDefaultInstance();
     }
 
     @Override
@@ -88,6 +95,8 @@ public class GenNumList_Adapter extends BaseAdapter{
 
     private View getDateView(int position, View convertView, ViewGroup parent) {
 
+        realm.beginTransaction();
+
         Viewholder viewholder = null;
 
         if(convertView == null){
@@ -99,6 +108,8 @@ public class GenNumList_Adapter extends BaseAdapter{
             viewholder = (Viewholder) convertView.getTag();
         }
 
+        //SavedNumber saved = results.get(position);
+
         CheckBox checkBox = (CheckBox) convertView.findViewById(R.id.check);
         TextView divider = (TextView) convertView.findViewById(R.id.tv_divider);
         TextView num1 = (TextView) convertView.findViewById(R.id.num1_adapter);
@@ -108,16 +119,20 @@ public class GenNumList_Adapter extends BaseAdapter{
         TextView num5 = (TextView) convertView.findViewById(R.id.num5_adapter);
         TextView num6 = (TextView) convertView.findViewById(R.id.num6_adapter);
 
-        int visibility = date.equals(results.get(position).getDate()) ? View.GONE : View.VISIBLE ;
-        Log.e("visibility","=======================" + visibility);
-        checkBox.setClickable(false);
-        checkBox.setVisibility(View.GONE);
+        if(results.get(position).getShow() == SavedNumber.NONE) {
+
+            results.get(position).setShow(date.equals(results.get(position).getDate()) ? View.GONE : View.VISIBLE);
+            divider.setVisibility(results.get(position).getShow()==View.VISIBLE ? View.VISIBLE : View.GONE);
+        }
 
         divider.setText(results.get(position).getDate());
-        divider.setVisibility(visibility);
-        if(visibility == View.VISIBLE){
-            divider.setTag("visible");
-        }
+
+
+        Log.e("date","=======================" + date);
+        Log.e("getdate","=======================" + results.get(position).getDate());
+        Log.e("visibility","=======================" + results.get(position).getShow());
+        checkBox.setClickable(false);
+        checkBox.setVisibility(View.GONE);
 
         num1.setText(results.get(position).getNum1() + "");
         num2.setText(results.get(position).getNum2() + "");
@@ -126,6 +141,8 @@ public class GenNumList_Adapter extends BaseAdapter{
         num5.setText(results.get(position).getNum5() + "");
         num6.setText(results.get(position).getNum6() + "");
         date = results.get(position).getDate();
+
+        realm.commitTransaction();
 
         return convertView;
     }

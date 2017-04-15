@@ -1,11 +1,18 @@
 package com.ahchim.android.ritto;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+
+import net.daum.mf.map.n.api.NativeMapLibraryLoader;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 
 /**
@@ -14,20 +21,57 @@ import android.widget.TextView;
 
 public class LocationAdapter extends BaseAdapter {
 
-    Context mContext;
-    String[] locationArray;
-    LayoutInflater layoutInflater;
+    public final int VIEW_TYPE_LOCA = 0;
+    public final int VIEW_TYPE_DETAIL = 1;
+    public final int TYPE_COUNT = 2;
 
-    public LocationAdapter (Context context, String[] array){
+    Context mContext;
+    List<String> locationArray;
+    //ArrayList<ArrayList<String>> detail;
+    LayoutInflater layoutInflater;
+    int depthFlag = 0;
+
+    public LocationAdapter (Context context, List<String> array, ArrayList<ArrayList<String>> detail, int Flag){
         mContext = context;
         locationArray = array;
+        //this.detail = detail;
         layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        depthFlag = Flag;
+        Log.e("adapter_detail","==================" + detail);
+        Log.e("depthFlag","==================" + depthFlag);
 
+        for(int i=0; i<detail.size(); i++){
+//            Log.e("adapter_locationArray","==================" + locationArray.get(i));
+            Log.e("adapter_detail","==================" + detail.get(i));
+        }
     }
+
+//    @Override
+//    public int getItemViewType(int position) {
+//        //return super.getItemViewType(position);
+//
+//        if(depthFlag < 3 ){
+//            return VIEW_TYPE_LOCA;
+//        } else {
+//            return VIEW_TYPE_DETAIL;
+//        }
+//    }
+//
+//    @Override
+//    public int getViewTypeCount() {
+//        //return super.getViewTypeCount();
+//        return TYPE_COUNT;
+//    }
 
     @Override
     public int getCount() {
-        return locationArray.length;
+
+        if(NationStoreActivity.LOCATION_DEPTH_FLAG < 3){
+            return locationArray.size();
+        } else if (NationStoreActivity.LOCATION_DEPTH_FLAG == 3){
+            return NationStoreActivity.detailLoc.size();
+        }
+        return 0;
     }
 
     @Override
@@ -43,14 +87,59 @@ public class LocationAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        if(convertView == null){
-            convertView = layoutInflater.inflate(R.layout.location_item, null, false);
+        if (NationStoreActivity.LOCATION_DEPTH_FLAG < 3){
+            Log.e("depthFlag < 3","==================" + NationStoreActivity.LOCATION_DEPTH_FLAG);
+            return getLocationView(position, convertView, parent);
+        } else if (NationStoreActivity.LOCATION_DEPTH_FLAG == 3){
+            Log.e("depthFlag == 3","==================" + NationStoreActivity.LOCATION_DEPTH_FLAG);
+            return getLocationDetailView(position, convertView, parent);
         }
+        return convertView;
+    }
 
-        TextView textView = (TextView) convertView.findViewById(R.id.tv_location);
-        textView.setText(locationArray[position]);
+    public View getLocationView(int position, View convertView, ViewGroup parent) {
 
+        Log.e("Normal - View - ENTER","============================================");
+
+        if(convertView == null){
+            convertView = layoutInflater.inflate(R.layout.location_item, null, true);
+        }
+        Log.e("adapter_position","==========" + position);
+        Log.e("locationArray","==========" + locationArray);
+        Log.e("location_(position)","==========" + locationArray.get(position));
+
+        TextView tv_location = (TextView) convertView.findViewById(R.id.tv_location);
+        tv_location.setText(locationArray.get(position));
 
         return convertView;
     }
+
+
+    public View getLocationDetailView(int position, View convertView, ViewGroup parent) {
+
+        Log.e("DetailView - ENTER","============================================");
+
+        if(convertView == null){
+            convertView = layoutInflater.inflate(R.layout.location_item_detail, null, true);
+        }
+
+        TextView tv_sangho = (TextView) convertView.findViewById(R.id.tv_sangho);
+        TextView tv_address = (TextView) convertView.findViewById(R.id.tv_address);
+        TextView tv_phoneNum = (TextView) convertView.findViewById(R.id.tv_phoneNum);
+
+        tv_sangho.setVisibility(View.VISIBLE);
+        tv_address.setVisibility(View.VISIBLE);
+        tv_phoneNum.setVisibility(View.VISIBLE);
+
+        Log.e("detailLoc","===" + NationStoreActivity.detailLoc);
+
+        tv_sangho.setText(NationStoreActivity.detailLoc.get(position).get(0));
+        tv_address.setText(NationStoreActivity.detailLoc.get(position).get(1));
+        tv_phoneNum.setText(NationStoreActivity.detailLoc.get(position).get(2));
+
+        return convertView;
+    }
+
+
+
 }

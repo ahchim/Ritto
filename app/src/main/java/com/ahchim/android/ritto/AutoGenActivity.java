@@ -25,8 +25,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.ahchim.android.ritto.model.SavedNumber;
+import com.ahchim.android.ritto.util.Ascending;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -114,8 +114,12 @@ public class AutoGenActivity extends AppCompatActivity implements View.OnClickLi
                 break;
 
             case R.id.btnSave :
-                saveGenNum(goToSaveNumber);
-                Toast.makeText(this, "선택한 번호가 저장되었습니다!", Toast.LENGTH_SHORT).show();
+                if(goToSaveNumber != null){
+                    saveGenNum(goToSaveNumber);
+                    Toast.makeText(this, "선택한 번호가 저장되었습니다!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, "번호를 생성해 주세요!", Toast.LENGTH_SHORT).show();
+                }
                 break;
 
             case R.id.btnGen1 :
@@ -305,22 +309,6 @@ public class AutoGenActivity extends AppCompatActivity implements View.OnClickLi
             allGeneratedNumber.add(p, generatedNumber);
             Log.e("allGeneratedNumber","=================" + allGeneratedNumber);
 
-        }
-    }
-
-    //오름차순
-    class Ascending implements Comparator<Integer>{
-        @Override
-        public int compare(Integer o1, Integer o2) {
-            return o1.compareTo(o2);
-        }
-    }
-
-    //내림차순
-    class Descending implements Comparator<Integer>{
-        @Override
-        public int compare(Integer o1, Integer o2) {
-            return o2.compareTo(o1);
         }
     }
 
